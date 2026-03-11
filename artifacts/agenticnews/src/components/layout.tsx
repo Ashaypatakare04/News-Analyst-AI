@@ -101,13 +101,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={login}
-                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-sm"
-              >
-                <LogIn className="w-4 h-4" />
-                Sign in
-              </button>
+              <Link href="/login">
+                <button className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-sm">
+                  <LogIn className="w-4 h-4" />
+                  Sign in
+                </button>
+              </Link>
             )}
           </div>
 
@@ -185,13 +184,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     </button>
                   </>
                 ) : (
-                  <button
-                    onClick={() => { setMobileMenuOpen(false); login(); }}
-                    className="w-full p-4 rounded-xl flex items-center gap-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                  >
-                    <LogIn className="w-5 h-5" />
-                    Sign in
-                  </button>
+                  <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                    <button className="w-full p-4 rounded-xl flex items-center gap-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
+                      <LogIn className="w-5 h-5" />
+                      Sign in
+                    </button>
+                  </Link>
                 )}
               </div>
             </nav>

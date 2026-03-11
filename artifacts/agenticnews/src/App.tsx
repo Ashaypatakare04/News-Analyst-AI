@@ -8,6 +8,7 @@ import Home from "./pages/home";
 import ArticlePage from "./pages/article";
 import AskPage from "./pages/ask";
 import UploadPage from "./pages/upload";
+import LoginPage from "./pages/login";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/login" component={LoginPage} />
       <Route path="/article/:id">
         {(params) => <ArticlePage />}
       </Route>
