@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: AgenticNews API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: news
+    description: News operations
+  - name: ai
+    description: AI operations
+  - name: upload
+    description: Upload operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +28,203 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /news:
+    get:
+      operationId: getNews
+      tags: [news]
+      summary: Fetch latest news
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: News category
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: News articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NewsResponse"
+
+  /news/{id}:
+    get:
+      operationId: getArticle
+      tags: [news]
+      summary: Get a single article by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /news/{id}/summarize:
+    post:
+      operationId: summarizeArticle
+      tags: [ai]
+      summary: Generate AI summary for an article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SummaryResponse"
+
+  /news/{id}/verify:
+    post:
+      operationId: verifyArticle
+      tags: [ai]
+      summary: Verify claims in an article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationResponse"
+
+  /news/{id}/audio:
+    post:
+      operationId: generateAudio
+      tags: [ai]
+      summary: Generate podcast-style audio for an article summary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audio generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AudioResponse"
+
+  /news/{id}/translate:
+    post:
+      operationId: translateArticle
+      tags: [ai]
+      summary: Translate article to target language
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranslateRequest"
+      responses:
+        "200":
+          description: Translated content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranslateResponse"
+
+  /ask:
+    post:
+      operationId: askQuestion
+      tags: [ai]
+      summary: Ask a question about news using RAG
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskRequest"
+      responses:
+        "200":
+          description: AI answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskResponse"
+
+  /upload:
+    post:
+      operationId: uploadArticle
+      tags: [upload]
+      summary: Upload newspaper image for OCR
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+      responses:
+        "200":
+          description: OCR and AI analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+  /categories:
+    get:
+      operationId: getCategories
+      tags: [news]
+      summary: Get available news categories
+      responses:
+        "200":
+          description: Categories list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CategoriesResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +235,279 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        content:
+          type: string
+        url:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        source:
+          type: string
+        author:
+          type: string
+          nullable: true
+        publishedAt:
+          type: string
+        category:
+          type: string
+        aiSummary:
+          type: string
+          nullable: true
+        bulletPoints:
+          type: array
+          items:
+            type: string
+          nullable: true
+        timeline:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelineEvent"
+          nullable: true
+        trustScore:
+          type: string
+          nullable: true
+          enum: [Low, Medium, High, null]
+        trustDetails:
+          $ref: "#/components/schemas/TrustDetails"
+          nullable: true
+        audioUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - description
+        - content
+        - url
+        - source
+        - publishedAt
+        - category
+        - createdAt
+
+    TimelineEvent:
+      type: object
+      properties:
+        date:
+          type: string
+        event:
+          type: string
+      required:
+        - date
+        - event
+
+    TrustDetails:
+      type: object
+      properties:
+        score:
+          type: string
+          enum: [Low, Medium, High]
+        reasoning:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        contradictions:
+          type: array
+          items:
+            type: string
+      required:
+        - score
+        - reasoning
+        - sources
+        - contradictions
+
+    NewsResponse:
+      type: object
+      properties:
+        articles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Article"
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+      required:
+        - articles
+        - total
+        - page
+        - pageSize
+
+    SummaryResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        bulletPoints:
+          type: array
+          items:
+            type: string
+        timeline:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelineEvent"
+      required:
+        - summary
+        - bulletPoints
+        - timeline
+
+    VerificationResponse:
+      type: object
+      properties:
+        trustScore:
+          type: string
+          enum: [Low, Medium, High]
+        reasoning:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        contradictions:
+          type: array
+          items:
+            type: string
+      required:
+        - trustScore
+        - reasoning
+        - sources
+        - contradictions
+
+    AudioResponse:
+      type: object
+      properties:
+        audioUrl:
+          type: string
+        message:
+          type: string
+      required:
+        - audioUrl
+        - message
+
+    TranslateRequest:
+      type: object
+      properties:
+        targetLanguage:
+          type: string
+      required:
+        - targetLanguage
+
+    TranslateResponse:
+      type: object
+      properties:
+        translatedTitle:
+          type: string
+        translatedContent:
+          type: string
+        language:
+          type: string
+      required:
+        - translatedTitle
+        - translatedContent
+        - language
+
+    AskRequest:
+      type: object
+      properties:
+        question:
+          type: string
+        conversationHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChatMessage"
+      required:
+        - question
+
+    ChatMessage:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+      required:
+        - role
+        - content
+
+    AskResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        sources:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleReference"
+      required:
+        - answer
+        - sources
+
+    ArticleReference:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        source:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - title
+        - source
+        - url
+
+    UploadResponse:
+      type: object
+      properties:
+        extractedText:
+          type: string
+        summary:
+          type: string
+        bulletPoints:
+          type: array
+          items:
+            type: string
+        insights:
+          type: string
+      required:
+        - extractedText
+        - summary
+        - bulletPoints
+        - insights
+
+    CategoriesResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+      required:
+        - categories

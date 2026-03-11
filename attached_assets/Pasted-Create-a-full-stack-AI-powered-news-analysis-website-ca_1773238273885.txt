@@ -1,0 +1,113 @@
+Create a full-stack AI-powered news analysis website called "AgenticNews".
+
+Goal:
+The website aggregates news from multiple sources, summarizes them using AI, verifies claims, and allows users to interact with the news using AI chat.
+
+Tech Stack:
+Frontend:
+- Next.js
+- Tailwind CSS
+
+Backend:
+- Node.js with Express
+
+Database:
+- MongoDB
+
+AI:
+- OpenAI API or Gemini API
+
+News Data:
+- NewsAPI
+
+Core Features:
+
+1. News Aggregation
+- Fetch latest news using NewsAPI
+- Store articles in MongoDB
+- Display them on homepage
+
+2. Intelligent Synthesis
+- Collect multiple articles on the same topic
+- Use AI to generate a unified summary
+- Provide bullet point summaries
+- Extract chronological events and display timeline
+
+3. Automated Verification
+- Cross-reference claims across multiple sources
+- Generate a trust score (Low / Medium / High)
+- Detect contradictions between sources
+- Show sources used for verification
+
+4. Dynamic Interaction
+- Provide a chat interface where users can ask questions about current affairs
+- Use Retrieval-Augmented Generation (RAG)
+- Retrieve relevant articles from database
+- Generate grounded answers using AI
+
+5. Multimodal Accessibility
+- Convert article summaries into podcast-style audio using text-to-speech
+- Translate articles into multiple languages
+- Allow users to upload photos of newspaper articles
+- Use OCR to extract text from images
+- Generate insights and summaries from extracted text
+
+Website Pages:
+
+Home Page
+- Trending news
+- AI generated summaries
+- Trust score indicator
+
+Article Page
+- Full article
+- AI summary
+- Timeline of events
+- Sources
+- Trust score
+
+Ask AI Page
+- Chat interface for asking questions about news
+
+Upload Page
+- Upload image of newspaper article
+- OCR extracts text
+- AI summarizes it
+
+Backend API Routes:
+
+GET /news
+Fetch news from NewsAPI
+
+POST /summarize
+Generate AI summary
+
+POST /verify
+Calculate trust score and verify claims
+
+POST /ask
+AI chat using RAG
+
+POST /upload
+Process uploaded article image
+
+Project Structure:
+
+frontend/
+pages/
+components/
+
+backend/
+api/
+services/
+
+Use clean UI, modern layout, and reusable React components.
+
+Also include environment variable support for API keys.
+
+Provide working example code for:
+- fetching news
+- AI summarization
+- chat interaction
+- OCR upload
+- trust score system
