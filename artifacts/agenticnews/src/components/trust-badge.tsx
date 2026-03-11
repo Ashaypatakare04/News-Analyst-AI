@@ -1,5 +1,5 @@
 import { Shield, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
-import { cn } from "./layout";
+import { cn } from "@/lib/utils";
 
 type TrustScore = "Low" | "Medium" | "High" | null | undefined;
 

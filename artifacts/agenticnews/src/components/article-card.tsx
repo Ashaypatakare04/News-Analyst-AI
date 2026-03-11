@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Sparkles, Clock, Globe } from "lucide-react";
 import { TrustBadge } from "./trust-badge";
 import type { Article } from "@workspace/api-client-react/src/generated/api.schemas";
-import { cn } from "./layout";
+import { cn } from "@/lib/utils";
 
 export function getCategoryColor(category: string) {
   const map: Record<string, string> = {

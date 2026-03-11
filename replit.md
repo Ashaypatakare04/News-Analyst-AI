@@ -15,6 +15,9 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **Auth**: Replit Auth (OIDC with PKCE) — email + Google sign-in
+- **AI**: OpenAI via Replit AI Integrations (gpt-5.2, tts-1)
+- **News**: NewsAPI (NEWS_API_KEY secret required)
 
 ## Structure
 

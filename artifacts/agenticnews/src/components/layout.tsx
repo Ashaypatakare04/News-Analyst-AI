@@ -1,18 +1,15 @@
 import { Link, useLocation } from "wouter";
-import { Newspaper, MessageSquare, Upload, Menu, X } from "lucide-react";
+import { Newspaper, MessageSquare, Upload, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { useAuth } from "@workspace/replit-auth-web";
+import { cn } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isLoading, isAuthenticated, login, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -75,6 +72,45 @@ export function Layout({ children }: { children: React.ReactNode }) {
             })}
           </nav>
 
+          {/* Auth section - Desktop */}
+          <div className="hidden md:flex items-center gap-2">
+            {isLoading ? (
+              <div className="w-8 h-8 rounded-full bg-secondary animate-pulse" />
+            ) : isAuthenticated && user ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60 border border-border/50">
+                  {user.profileImageUrl ? (
+                    <img
+                      src={user.profileImageUrl}
+                      alt={user.firstName ?? "User"}
+                      className="w-5 h-5 rounded-full object-cover"
+                    />
+                  ) : (
+                    <User className="w-4 h-4 text-muted-foreground" />
+                  )}
+                  <span className="text-sm font-medium text-foreground">
+                    {user.firstName ?? user.email ?? "User"}
+                  </span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/60 border border-transparent hover:border-border/50 transition-all duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={login}
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-sm"
+              >
+                <LogIn className="w-4 h-4" />
+                Sign in
+              </button>
+            )}
+          </div>
+
           <button
             className="md:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -114,6 +150,50 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
+
+              {/* Mobile Auth */}
+              <div className="mt-4 pt-4 border-t border-border/50">
+                {isAuthenticated && user ? (
+                  <>
+                    <div className="flex items-center gap-3 p-4 rounded-xl bg-secondary/40 mb-2">
+                      {user.profileImageUrl ? (
+                        <img
+                          src={user.profileImageUrl}
+                          alt={user.firstName ?? "User"}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {user.firstName ? `${user.firstName} ${user.lastName ?? ""}`.trim() : "User"}
+                        </p>
+                        {user.email && (
+                          <p className="text-xs text-muted-foreground">{user.email}</p>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); logout(); }}
+                      className="w-full p-4 rounded-xl flex items-center gap-3 text-base font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-colors"
+                    >
+                      <LogOut className="w-5 h-5" />
+                      Sign out
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); login(); }}
+                    className="w-full p-4 rounded-xl flex items-center gap-3 text-base font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    <LogIn className="w-5 h-5" />
+                    Sign in
+                  </button>
+                )}
+              </div>
             </nav>
           </motion.div>
         )}

@@ -17,7 +17,8 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2",
     "multer": "^1.4.5-lts.1",
-    "axios": "^1.7.9"
+    "axios": "^1.7.9",
+    "openid-client": "^6.6.0"
   },
   "devDependencies": {
     "@types/node": "catalog:",
