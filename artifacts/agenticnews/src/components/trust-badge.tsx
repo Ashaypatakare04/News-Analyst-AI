@@ -6,9 +6,9 @@ type TrustScore = "Low" | "Medium" | "High" | null | undefined;
 export function TrustBadge({ score, className }: { score: TrustScore; className?: string }) {
   if (!score) {
     return (
-      <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/50 text-muted-foreground text-xs font-medium border border-border/50 backdrop-blur-md", className)}>
-        <ShieldQuestion className="w-3.5 h-3.5" />
-        <span>Unverified</span>
+      <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-muted-foreground text-[11px] font-semibold border border-border/60 bg-secondary/40 backdrop-blur-md", className)}>
+        <ShieldQuestion className="w-3 h-3" />
+        <span>UNVERIFIED</span>
       </div>
     );
   }
@@ -37,9 +37,9 @@ export function TrustBadge({ score, className }: { score: TrustScore; className?
   const Icon = config.icon;
 
   return (
-    <div className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold backdrop-blur-md transition-colors", config.bg, config.color, config.border, "border", className)}>
-      <Icon className="w-3.5 h-3.5" />
-      <span>{score} Trust</span>
+    <div className={cn("inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider backdrop-blur-md transition-colors", config.bg, config.color, config.border, "border", className)}>
+      <Icon className="w-3 h-3" />
+      <span>{score} TRUST</span>
     </div>
   );
 }

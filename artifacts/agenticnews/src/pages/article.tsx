@@ -1,5 +1,6 @@
 import { Layout } from "@/components/layout";
 import { TrustBadge } from "@/components/trust-badge";
+import { getCategoryColor } from "@/components/article-card";
 import { 
   useGetArticle, 
   useSummarizeArticle, 
@@ -17,6 +18,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetArticleQueryKey } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 type Tab = "summary" | "timeline" | "article" | "sources";
 
@@ -30,7 +32,9 @@ export default function ArticlePage() {
   const [targetLang, setTargetLang] = useState("es");
   const [showTranslate, setShowTranslate] = useState(false);
 
-  const { data: article, isLoading } = useGetArticle(articleId);
+  const { data: article, isLoading } = useGetArticle(articleId, {
+    query: { enabled: !!articleId, queryKey: getGetArticleQueryKey(articleId) }
+  });
 
   const onSuccess = (message: string) => {
     queryClient.invalidateQueries({ queryKey: getGetArticleQueryKey(articleId) });
@@ -64,90 +68,126 @@ export default function ArticlePage() {
     );
   }
 
-  {/* default image if missing */}
   const imageUrl = article.imageUrl || "https://images.unsplash.com/photo-1495020689067-958852a7765e?w=1920&h=1080&fit=crop";
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors group">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to top stories
-        </Link>
+      <div className="w-full relative bg-background">
+        {/* Full-width Hero */}
+        <div className="relative w-full h-[50vh] md:h-[60vh] min-h-[400px] overflow-hidden">
+          <img src={imageUrl} alt={article.title} className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+          
+          <div className="absolute bottom-0 inset-x-0">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-8 md:pb-12">
+              <Link href="/" className="inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground mb-6 transition-colors group bg-background/20 px-3 py-1.5 rounded-full backdrop-blur-md border border-border/20 w-fit">
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back
+              </Link>
+              
+              <div className="flex items-center gap-3 mb-4 flex-wrap">
+                <span className={cn("px-3 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-md", getCategoryColor(article.category))}>
+                  {article.category}
+                </span>
+                <span className="text-foreground/80 text-sm font-medium">
+                  {format(new Date(article.publishedAt), 'MMMM d, yyyy')}
+                </span>
+              </div>
 
-        {/* Hero Section */}
-        <header className="mb-10">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">
-              {article.category}
-            </span>
-            <TrustBadge score={article.trustScore} />
-            <span className="text-muted-foreground text-sm font-medium">
-              {format(new Date(article.publishedAt), 'MMMM d, yyyy')}
-            </span>
-          </div>
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-foreground drop-shadow-xl">
+                {article.title}
+              </h1>
 
-          <h1 className="text-3xl md:text-5xl font-serif font-bold leading-tight mb-6">
-            {article.title}
-          </h1>
-
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
-            <div className="flex items-center gap-2 text-muted-foreground font-medium">
-              By <span className="text-foreground">{article.author || article.source}</span>
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-secondary/50 border border-border/50 flex items-center justify-center font-serif font-bold text-lg text-primary">
+                    {article.source.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-foreground text-sm">{article.source}</div>
+                    {article.author && <div className="text-muted-foreground text-xs">{article.author}</div>}
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            {/* Action Bar */}
-            <div className="flex items-center gap-2 bg-card p-1.5 rounded-xl border border-border/50 shadow-lg">
+          </div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+          
+          {/* Trust Panel & Actions */}
+          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between bg-card border border-border/50 rounded-2xl p-4 md:p-6 mb-10 -mt-16 relative z-10 shadow-2xl">
+            <div className="flex items-center gap-4">
+              <div className="shrink-0 p-3 rounded-xl bg-secondary/50 border border-border/50">
+                <ShieldCheck className={cn("w-6 h-6", 
+                  article.trustScore === "High" ? "text-emerald-400" :
+                  article.trustScore === "Medium" ? "text-amber-400" :
+                  article.trustScore === "Low" ? "text-rose-400" : "text-muted-foreground"
+                )} />
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-1">Verification Status</div>
+                <div className="flex items-center gap-3">
+                  <span className="text-lg font-bold">{article.trustScore || "Pending"} Trust</span>
+                  {article.trustScore && (
+                    <div className="flex gap-1">
+                      <div className={cn("h-1.5 w-6 rounded-full", article.trustScore === "Low" || article.trustScore === "Medium" || article.trustScore === "High" ? "bg-emerald-400" : "bg-border")} />
+                      <div className={cn("h-1.5 w-6 rounded-full", article.trustScore === "Medium" || article.trustScore === "High" ? "bg-emerald-400" : "bg-border")} />
+                      <div className={cn("h-1.5 w-6 rounded-full", article.trustScore === "High" ? "bg-emerald-400" : "bg-border")} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide">
               <button 
                 onClick={() => sumMut.mutate({ id: articleId })}
                 disabled={sumMut.isPending}
-                className="p-2 md:px-4 md:py-2 rounded-lg hover:bg-secondary text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                className="shrink-0 px-4 py-2 rounded-full bg-primary/10 hover:bg-primary/20 border border-primary/20 text-primary text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
               >
-                {sumMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4 text-primary" />}
-                <span className="hidden md:inline">Summarize</span>
+                {sumMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
+                ✨ AI Summary
               </button>
-              
-              <div className="w-px h-6 bg-border/50" />
               
               <button 
                 onClick={() => verMut.mutate({ id: articleId })}
                 disabled={verMut.isPending}
-                className="p-2 md:px-4 md:py-2 rounded-lg hover:bg-secondary text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                className="shrink-0 px-4 py-2 rounded-full bg-secondary/80 hover:bg-secondary border border-border/50 text-foreground text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
               >
-                {verMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4 text-emerald-400" />}
-                <span className="hidden md:inline">Verify</span>
+                {verMut.isPending ? <Loader2 className="w-4 h-4 animate-spin text-emerald-400" /> : <ShieldCheck className="w-4 h-4 text-emerald-400" />}
+                🔍 Verify
               </button>
-
-              <div className="w-px h-6 bg-border/50" />
               
               <button 
                 onClick={() => audMut.mutate({ id: articleId })}
                 disabled={audMut.isPending}
-                className="p-2 md:px-4 md:py-2 rounded-lg hover:bg-secondary text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
+                className="shrink-0 px-4 py-2 rounded-full bg-secondary/80 hover:bg-secondary border border-border/50 text-foreground text-sm font-medium flex items-center gap-2 transition-colors disabled:opacity-50"
               >
-                {audMut.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Headphones className="w-4 h-4 text-purple-400" />}
-                <span className="hidden md:inline">Listen</span>
+                {audMut.isPending ? <Loader2 className="w-4 h-4 animate-spin text-purple-400" /> : <Headphones className="w-4 h-4 text-purple-400" />}
+                🎧 Audio
               </button>
 
-              <div className="w-px h-6 bg-border/50" />
-
-              <div className="relative">
+              <div className="relative shrink-0">
                 <button 
                   onClick={() => setShowTranslate(!showTranslate)}
-                  className="p-2 md:px-4 md:py-2 rounded-lg hover:bg-secondary text-sm font-medium flex items-center gap-2 transition-colors"
+                  className="px-4 py-2 rounded-full bg-secondary/80 hover:bg-secondary border border-border/50 text-foreground text-sm font-medium flex items-center gap-2 transition-colors"
                 >
                   <Languages className="w-4 h-4 text-blue-400" />
-                  <span className="hidden md:inline">Translate</span>
+                  🌐 Translate
                 </button>
                 
                 <AnimatePresence>
                   {showTranslate && (
                     <motion.div 
-                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                      className="absolute right-0 top-full mt-2 bg-card border border-border rounded-xl shadow-2xl p-3 min-w-[200px] z-10"
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }} 
+                      animate={{ opacity: 1, y: 0, scale: 1 }} 
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-2 bg-card border border-border/50 rounded-2xl shadow-2xl p-4 min-w-[220px] z-50 origin-top-right"
                     >
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Target Language</h4>
                       <select 
                         value={targetLang} onChange={e => setTargetLang(e.target.value)}
-                        className="w-full bg-background border border-border rounded-lg p-2 text-sm mb-3"
+                        className="w-full bg-secondary/50 border border-border/50 rounded-xl p-2.5 text-sm mb-4 outline-none focus:border-primary/50"
                       >
                         <option value="es">Spanish</option>
                         <option value="fr">French</option>
@@ -157,9 +197,9 @@ export default function ArticlePage() {
                       <button
                         onClick={() => trMut.mutate({ id: articleId, data: { targetLanguage: targetLang } })}
                         disabled={trMut.isPending}
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2 rounded-lg text-sm font-medium transition-colors"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-50"
                       >
-                        {trMut.isPending ? "Translating..." : "Translate"}
+                        {trMut.isPending ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Start Translation"}
                       </button>
                     </motion.div>
                   )}
@@ -168,182 +208,195 @@ export default function ArticlePage() {
             </div>
           </div>
 
-          <div className="relative aspect-video md:aspect-[21/9] rounded-2xl overflow-hidden shadow-2xl">
-            <img src={imageUrl} alt={article.title} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
-          </div>
-          
+          {/* Audio Player */}
           {article.audioUrl && (
-            <div className="mt-6 bg-secondary/30 border border-border/50 rounded-2xl p-4 flex items-center gap-4">
-              <button className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center hover:scale-105 transition-transform shadow-lg shadow-primary/25">
-                <Play className="w-5 h-5 ml-1" />
-              </button>
-              <div className="flex-1">
-                <div className="text-sm font-medium mb-1">AI Podcast Summary</div>
-                <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                  <div className="bg-primary w-1/3 h-full rounded-full" />
-                </div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 bg-gradient-to-r from-card to-card/50 border border-border/50 rounded-3xl p-5 md:p-6 flex flex-col md:flex-row items-center gap-6 shadow-lg">
+              <div className="w-16 h-16 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-primary flex items-center justify-center shadow-lg shadow-purple-500/20 text-white">
+                <Play className="w-7 h-7 ml-1 fill-current" />
               </div>
-            </div>
+              <div className="flex-1 w-full text-center md:text-left">
+                <div className="text-xs text-purple-400 font-bold uppercase tracking-wider mb-1">Generated Podcast</div>
+                <div className="text-lg font-semibold text-foreground mb-3">{article.title} - Overview</div>
+                {/* Minimal styled audio */}
+                <audio controls src={article.audioUrl} className="w-full h-10 rounded-full outline-none [&::-webkit-media-controls-panel]:bg-secondary [&::-webkit-media-controls-panel]:text-foreground" />
+              </div>
+            </motion.div>
           )}
-        </header>
 
-        {/* Content Tabs */}
-        <div className="mb-8 border-b border-border/50 flex overflow-x-auto scrollbar-hide">
-          {[
-            { id: "summary", label: "AI Summary", icon: Brain },
-            { id: "timeline", label: "Timeline", icon: CircleDot },
-            { id: "article", label: "Full Article", icon: FileText },
-            { id: "sources", label: "Verification", icon: ShieldCheck },
-          ].map(t => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id as Tab)}
-              className={`flex items-center gap-2 px-6 py-4 border-b-2 font-medium transition-colors whitespace-nowrap ${
-                activeTab === t.id 
-                  ? "border-primary text-primary" 
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:bg-secondary/20"
-              }`}
-            >
-              <t.icon className="w-4 h-4" />
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className="min-h-[400px]">
-          {activeTab === "summary" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-              {article.aiSummary ? (
-                <>
-                  <div className="prose prose-invert prose-lg max-w-none text-foreground/90 leading-relaxed font-serif">
-                    {article.aiSummary}
-                  </div>
-                  {article.bulletPoints && article.bulletPoints.length > 0 && (
-                    <div className="bg-secondary/20 border border-border/50 rounded-2xl p-6 md:p-8">
-                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        <Brain className="w-5 h-5 text-primary" /> Key Insights
-                      </h3>
-                      <ul className="space-y-3">
-                        {article.bulletPoints.map((bp, i) => (
-                          <li key={i} className="flex gap-3 text-muted-foreground">
-                            <span className="text-primary mt-1">•</span>
-                            <span className="leading-relaxed">{bp}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+          {/* Underline Tabs */}
+          <div className="mb-8 relative">
+            <div className="flex overflow-x-auto scrollbar-hide border-b border-border/50 hide-scrollbar">
+              {[
+                { id: "summary", label: "AI Summary", icon: Brain },
+                { id: "timeline", label: "Timeline", icon: CircleDot },
+                { id: "article", label: "Full Text", icon: FileText },
+                { id: "sources", label: "Verification", icon: ShieldCheck },
+              ].map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveTab(t.id as Tab)}
+                  className={cn(
+                    "flex items-center gap-2 px-6 py-4 font-medium transition-colors whitespace-nowrap relative text-sm md:text-base",
+                    activeTab === t.id ? "text-foreground" : "text-muted-foreground hover:text-foreground/80"
                   )}
-                </>
-              ) : (
-                <div className="text-center py-20 border-2 border-dashed border-border/50 rounded-3xl">
-                  <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">No summary available</p>
-                  <button 
-                    onClick={() => sumMut.mutate({ id: articleId })}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Generate one now
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          )}
+                >
+                  <t.icon className={cn("w-4 h-4", activeTab === t.id ? "text-primary" : "opacity-70")} />
+                  {t.label}
+                  {activeTab === t.id && (
+                    <motion.div 
+                      layoutId="activeTab" 
+                      className="absolute bottom-0 inset-x-0 h-0.5 bg-primary" 
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
 
-          {activeTab === "timeline" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-4">
-              {article.timeline && article.timeline.length > 0 ? (
-                <div className="relative border-l-2 border-border ml-4 md:ml-6 space-y-10">
-                  {article.timeline.map((event, i) => (
-                    <div key={i} className="relative pl-8 md:pl-10">
-                      <div className="absolute w-4 h-4 bg-primary rounded-full -left-[9px] top-1 ring-4 ring-background" />
-                      <div className="text-sm font-bold text-primary mb-1 uppercase tracking-wider">{event.date}</div>
-                      <div className="text-lg font-medium text-foreground/90">{event.event}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20 border-2 border-dashed border-border/50 rounded-3xl">
-                  <CircleDot className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">No timeline extracted</p>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {activeTab === "article" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="prose prose-invert prose-lg max-w-none text-foreground/80 leading-relaxed font-serif">
-                {article.content.split('\n').map((paragraph, i) => (
-                  <p key={i} className="mb-6">{paragraph}</p>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === "sources" && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
-              {article.trustDetails ? (
-                <>
-                  <div className="bg-card border border-border/50 rounded-3xl p-8 shadow-xl">
-                    <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border/50">
-                      <TrustBadge score={article.trustScore} className="scale-125 origin-left" />
-                      <p className="text-muted-foreground font-medium text-lg">Detailed Verification Report</p>
-                    </div>
-                    
-                    <h4 className="text-xl font-bold mb-3">Reasoning</h4>
-                    <p className="text-muted-foreground leading-relaxed mb-8">{article.trustDetails.reasoning}</p>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                      <div>
-                        <h4 className="flex items-center gap-2 text-emerald-400 font-bold mb-4">
-                          <CheckCircle2 className="w-5 h-5" /> Corroborating Sources
-                        </h4>
-                        <ul className="space-y-3">
-                          {article.trustDetails.sources.map((s, i) => (
-                            <li key={i} className="flex gap-2 text-sm text-foreground/80 bg-secondary/30 p-3 rounded-xl border border-border/50">
-                              • {s}
-                            </li>
-                          ))}
-                        </ul>
+          {/* Tab Content */}
+          <div className="min-h-[400px]">
+            <AnimatePresence mode="wait">
+              {activeTab === "summary" && (
+                <motion.div key="summary" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+                  {article.aiSummary ? (
+                    <>
+                      <div className="text-xl md:text-2xl text-foreground/90 leading-relaxed font-serif">
+                        {article.aiSummary}
                       </div>
-                      
-                      <div>
-                        <h4 className="flex items-center gap-2 text-rose-400 font-bold mb-4">
-                          <XCircle className="w-5 h-5" /> Contradictions / Flags
-                        </h4>
-                        {article.trustDetails.contradictions.length > 0 ? (
-                          <ul className="space-y-3">
-                            {article.trustDetails.contradictions.map((c, i) => (
-                              <li key={i} className="flex gap-2 text-sm text-foreground/80 bg-rose-400/5 border border-rose-400/20 p-3 rounded-xl">
-                                • {c}
+                      {article.bulletPoints && article.bulletPoints.length > 0 && (
+                        <div className="bg-card border border-border/50 rounded-3xl p-6 md:p-8 shadow-sm">
+                          <h3 className="text-lg font-bold mb-6 flex items-center gap-2 uppercase tracking-wide text-muted-foreground">
+                            <Brain className="w-5 h-5 text-primary" /> Key Takeaways
+                          </h3>
+                          <ul className="space-y-4">
+                            {article.bulletPoints.map((bp, i) => (
+                              <li key={i} className="flex gap-4">
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                <span className="text-lg text-foreground/80 leading-relaxed">{bp}</span>
                               </li>
                             ))}
                           </ul>
-                        ) : (
-                          <div className="text-sm text-muted-foreground bg-secondary/30 p-4 rounded-xl text-center italic">
-                            No major contradictions found across verified sources.
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="text-center py-24 border-2 border-dashed border-border/50 rounded-3xl">
+                      <Brain className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-xl font-medium mb-2">No summary available</p>
+                      <button 
+                        onClick={() => sumMut.mutate({ id: articleId })}
+                        className="mt-4 px-6 py-2.5 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors"
+                      >
+                        Generate Summary
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {activeTab === "timeline" && (
+                <motion.div key="timeline" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="py-6">
+                  {article.timeline && article.timeline.length > 0 ? (
+                    <div className="relative border-l-2 border-border/50 ml-4 md:ml-8 space-y-12 pb-8">
+                      {article.timeline.map((event, i) => (
+                        <div key={i} className="relative pl-8 md:pl-12">
+                          <div className="absolute w-4 h-4 bg-background border-2 border-primary rounded-full -left-[9px] top-1.5 shadow-[0_0_10px_rgba(37,99,235,0.5)]" />
+                          <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-3">
+                            {event.date}
                           </div>
-                        )}
+                          <div className="text-xl font-medium text-foreground/90 leading-snug bg-card p-5 rounded-2xl border border-border/50 shadow-sm">{event.event}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-24 border-2 border-dashed border-border/50 rounded-3xl">
+                      <CircleDot className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-xl font-medium mb-2">No timeline extracted</p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {activeTab === "article" && (
+                <motion.div key="article" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+                  <div className="prose prose-invert prose-lg max-w-none text-foreground/80 leading-relaxed font-serif">
+                    {article.content.split('\n').map((paragraph, i) => (
+                      paragraph.trim() && <p key={i} className="mb-6">{paragraph}</p>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {activeTab === "sources" && (
+                <motion.div key="sources" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
+                  {article.trustDetails ? (
+                    <div className="bg-card border border-border/50 rounded-3xl p-6 md:p-10 shadow-xl">
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 pb-8 border-b border-border/50">
+                        <div>
+                          <h3 className="text-2xl font-bold mb-2">Verification Report</h3>
+                          <p className="text-muted-foreground">Cross-referenced against global credible sources.</p>
+                        </div>
+                        <TrustBadge score={article.trustScore} className="scale-110 md:scale-125 md:origin-right" />
+                      </div>
+                      
+                      <div className="mb-10">
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Analysis Reasoning</h4>
+                        <div className="bg-secondary/30 p-6 rounded-2xl text-lg text-foreground/90 leading-relaxed">
+                          {article.trustDetails.reasoning}
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <div>
+                          <h4 className="flex items-center gap-2 text-emerald-400 font-bold mb-4 bg-emerald-400/10 px-4 py-2 rounded-xl w-fit">
+                            <CheckCircle2 className="w-5 h-5" /> Corroborated Facts
+                          </h4>
+                          <ul className="space-y-3">
+                            {article.trustDetails.sources.map((s, i) => (
+                              <li key={i} className="flex gap-3 text-sm text-foreground/80 bg-secondary/20 p-4 rounded-xl border border-border/30">
+                                <span className="text-emerald-400 font-bold">✓</span> {s}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div>
+                          <h4 className="flex items-center gap-2 text-rose-400 font-bold mb-4 bg-rose-400/10 px-4 py-2 rounded-xl w-fit">
+                            <XCircle className="w-5 h-5" /> Flags & Discrepancies
+                          </h4>
+                          {article.trustDetails.contradictions.length > 0 ? (
+                            <ul className="space-y-3">
+                              {article.trustDetails.contradictions.map((c, i) => (
+                                <li key={i} className="flex gap-3 text-sm text-foreground/80 bg-rose-400/5 border border-rose-400/20 p-4 rounded-xl">
+                                  <span className="text-rose-400 font-bold">!</span> {c}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <div className="text-sm text-emerald-400/80 bg-emerald-400/5 border border-emerald-400/20 p-6 rounded-xl text-center flex flex-col items-center gap-2">
+                              <CheckCircle2 className="w-8 h-8 opacity-50" />
+                              <span className="font-medium">No major contradictions found across verified sources.</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-20 border-2 border-dashed border-border/50 rounded-3xl">
-                  <ShieldCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">Not verified yet</p>
-                  <button 
-                    onClick={() => verMut.mutate({ id: articleId })}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    Run verification engine
-                  </button>
-                </div>
+                  ) : (
+                    <div className="text-center py-24 border-2 border-dashed border-border/50 rounded-3xl">
+                      <ShieldCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                      <p className="text-xl font-medium mb-2">Analysis Pending</p>
+                      <button 
+                        onClick={() => verMut.mutate({ id: articleId })}
+                        className="mt-4 px-6 py-2.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full font-medium hover:bg-emerald-500/30 transition-colors flex items-center gap-2 mx-auto"
+                      >
+                        <ShieldCheck className="w-4 h-4" /> Run Verification Engine
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
               )}
-            </motion.div>
-          )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </Layout>
