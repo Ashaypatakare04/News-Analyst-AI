@@ -9,6 +9,7 @@ import ArticlePage from "./pages/article";
 import AskPage from "./pages/ask";
 import UploadPage from "./pages/upload";
 import LoginPage from "./pages/login";
+import BriefPage from "./pages/brief";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ function Router() {
       </Route>
       <Route path="/ask" component={AskPage} />
       <Route path="/upload" component={UploadPage} />
+      <Route path="/brief" component={BriefPage} />
       <Route component={NotFound} />
     </Switch>
   );

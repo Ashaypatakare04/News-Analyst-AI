@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Newspaper, MessageSquare, Upload, Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { Newspaper, MessageSquare, Upload, Menu, X, LogIn, LogOut, User, BookOpen } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@workspace/replit-auth-web";
@@ -19,6 +19,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { path: "/", label: "Top Stories", icon: Newspaper },
+    { path: "/brief", label: "Daily Brief", icon: BookOpen },
     { path: "/ask", label: "Ask AI", icon: MessageSquare },
     { path: "/upload", label: "Scan News", icon: Upload },
   ];

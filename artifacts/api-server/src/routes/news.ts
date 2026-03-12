@@ -16,6 +16,9 @@ import {
   verifyArticle,
   generateAudioForArticle,
   translateArticle,
+  generateIntelligence,
+  generateTrending,
+  generateDailyBrief,
 } from "../services/ai.js";
 
 const router: IRouter = Router();
@@ -33,6 +36,36 @@ const CATEGORIES = [
 
 router.get("/categories", (_req, res) => {
   res.json({ categories: CATEGORIES });
+});
+
+router.get("/intelligence", async (_req, res) => {
+  try {
+    const data = await generateIntelligence();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to generate intelligence" });
+  }
+});
+
+router.get("/trending", async (_req, res) => {
+  try {
+    const data = await generateTrending();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to generate trending" });
+  }
+});
+
+router.get("/brief", async (_req, res) => {
+  try {
+    const data = await generateDailyBrief();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to generate brief" });
+  }
 });
 
 router.get("/news", async (req, res) => {
@@ -61,8 +94,12 @@ router.get("/news", async (req, res) => {
       category: a.category,
       aiSummary: a.aiSummary,
       bulletPoints: a.bulletPoints,
+      actors: a.actors,
       timeline: a.timeline,
       trustScore: a.trustScore,
+      trustPercentage: a.trustPercentage,
+      agreementLevel: a.agreementLevel,
+      mainClaim: a.mainClaim,
       trustDetails: a.trustDetails,
       audioUrl: a.audioUrl,
       createdAt: a.createdAt.toISOString(),
@@ -111,8 +148,12 @@ router.get("/news/:id", async (req, res) => {
       category: a.category,
       aiSummary: a.aiSummary,
       bulletPoints: a.bulletPoints,
+      actors: a.actors,
       timeline: a.timeline,
       trustScore: a.trustScore,
+      trustPercentage: a.trustPercentage,
+      agreementLevel: a.agreementLevel,
+      mainClaim: a.mainClaim,
       trustDetails: a.trustDetails,
       audioUrl: a.audioUrl,
       createdAt: a.createdAt.toISOString(),
@@ -126,9 +167,7 @@ router.get("/news/:id", async (req, res) => {
 router.post("/news/:id/summarize", async (req, res) => {
   try {
     const parsed = SummarizeArticleParams.safeParse({ id: Number(req.params.id) });
-    if (!parsed.success) {
-      return res.status(400).json({ error: "Invalid article ID" });
-    }
+    if (!parsed.success) return res.status(400).json({ error: "Invalid article ID" });
     const result = await generateSummary(parsed.data.id);
     res.json(result);
   } catch (err) {
@@ -140,9 +179,7 @@ router.post("/news/:id/summarize", async (req, res) => {
 router.post("/news/:id/verify", async (req, res) => {
   try {
     const parsed = VerifyArticleParams.safeParse({ id: Number(req.params.id) });
-    if (!parsed.success) {
-      return res.status(400).json({ error: "Invalid article ID" });
-    }
+    if (!parsed.success) return res.status(400).json({ error: "Invalid article ID" });
     const result = await verifyArticle(parsed.data.id);
     res.json(result);
   } catch (err) {
@@ -154,9 +191,7 @@ router.post("/news/:id/verify", async (req, res) => {
 router.post("/news/:id/audio", async (req, res) => {
   try {
     const parsed = GenerateAudioParams.safeParse({ id: Number(req.params.id) });
-    if (!parsed.success) {
-      return res.status(400).json({ error: "Invalid article ID" });
-    }
+    if (!parsed.success) return res.status(400).json({ error: "Invalid article ID" });
     const result = await generateAudioForArticle(parsed.data.id);
     res.json(result);
   } catch (err) {
@@ -169,15 +204,10 @@ router.post("/news/:id/translate", async (req, res) => {
   try {
     const paramsParsed = TranslateArticleParams.safeParse({ id: Number(req.params.id) });
     const bodyParsed = TranslateArticleBody.safeParse(req.body);
-
     if (!paramsParsed.success || !bodyParsed.success) {
       return res.status(400).json({ error: "Invalid request" });
     }
-
-    const result = await translateArticle(
-      paramsParsed.data.id,
-      bodyParsed.data.targetLanguage
-    );
+    const result = await translateArticle(paramsParsed.data.id, bodyParsed.data.targetLanguage);
     res.json(result);
   } catch (err) {
     console.error(err);

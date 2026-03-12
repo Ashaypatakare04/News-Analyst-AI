@@ -15,8 +15,12 @@ export const articlesTable = pgTable("articles", {
   category: text("category").notNull().default("general"),
   aiSummary: text("ai_summary"),
   bulletPoints: jsonb("bullet_points").$type<string[]>(),
+  actors: jsonb("actors").$type<string[]>(),
   timeline: jsonb("timeline").$type<{ date: string; event: string }[]>(),
   trustScore: text("trust_score"),
+  trustPercentage: integer("trust_percentage"),
+  agreementLevel: text("agreement_level"),
+  mainClaim: text("main_claim"),
   trustDetails: jsonb("trust_details").$type<{
     score: string;
     reasoning: string;

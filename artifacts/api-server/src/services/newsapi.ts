@@ -2,6 +2,7 @@ import axios from "axios";
 import { db, articlesTable } from "@workspace/db";
 import { eq, desc, like, or, sql } from "drizzle-orm";
 import type { InsertArticle } from "@workspace/db";
+import { generateSummary } from "./ai.js";
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const NEWS_API_BASE = "https://newsapi.org/v2";
@@ -34,6 +35,7 @@ export async function fetchAndStoreNews(category = "general", pageSize = 20) {
     });
 
     const articles: NewsApiArticle[] = response.data.articles || [];
+    const newIds: number[] = [];
 
     for (const a of articles) {
       if (!a.title || a.title === "[Removed]") continue;
@@ -58,7 +60,22 @@ export async function fetchAndStoreNews(category = "general", pageSize = 20) {
         category,
       };
 
-      await db.insert(articlesTable).values(insert).onConflictDoNothing();
+      const [inserted] = await db
+        .insert(articlesTable)
+        .values(insert)
+        .onConflictDoNothing()
+        .returning({ id: articlesTable.id });
+
+      if (inserted) newIds.push(inserted.id);
+    }
+
+    if (newIds.length > 0) {
+      console.log(`Auto-summarizing ${newIds.length} new article(s)...`);
+      for (const id of newIds.slice(0, 5)) {
+        generateSummary(id).catch((err) =>
+          console.warn(`Auto-summarize failed for article ${id}:`, err?.message)
+        );
+      }
     }
   } catch (err) {
     console.error("NewsAPI error:", err);
@@ -73,8 +90,6 @@ export async function getArticlesFromDb(
 ) {
   const offset = (page - 1) * pageSize;
 
-  let query = db.select().from(articlesTable);
-
   const conditions = [];
   if (category && category !== "all") {
     conditions.push(eq(articlesTable.category, category));
@@ -88,10 +103,17 @@ export async function getArticlesFromDb(
     );
   }
 
+  const whereClause =
+    conditions.length === 0
+      ? undefined
+      : conditions.length === 1
+      ? conditions[0]
+      : sql`${conditions[0]} AND ${conditions[1]}`;
+
   const results = await db
     .select()
     .from(articlesTable)
-    .where(conditions.length > 0 ? (conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`) : undefined)
+    .where(whereClause)
     .orderBy(desc(articlesTable.createdAt))
     .limit(pageSize)
     .offset(offset);
@@ -99,7 +121,7 @@ export async function getArticlesFromDb(
   const countResult = await db
     .select({ count: sql<number>`count(*)` })
     .from(articlesTable)
-    .where(conditions.length > 0 ? (conditions.length === 1 ? conditions[0] : sql`${conditions[0]} AND ${conditions[1]}`) : undefined);
+    .where(whereClause);
 
   return {
     articles: results,
