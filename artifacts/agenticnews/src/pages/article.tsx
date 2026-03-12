@@ -78,7 +78,7 @@ export default function ArticlePage() {
       <Layout>
         <div className="text-center py-20">
           <h2 className="text-2xl font-bold">Article not found</h2>
-          <Link href="/" className="text-primary hover:underline mt-4 inline-block">Return home</Link>
+          <Link href="/home" className="text-primary hover:underline mt-4 inline-block">Return home</Link>
         </div>
       </Layout>
     );
@@ -100,7 +100,7 @@ export default function ArticlePage() {
 
           <div className="absolute bottom-0 inset-x-0">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 pb-8 md:pb-12">
-              <Link href="/" className="inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground mb-6 transition-colors group bg-background/20 px-3 py-1.5 rounded-full backdrop-blur-md border border-border/20 w-fit">
+              <Link href="/home" className="inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground mb-6 transition-colors group bg-background/20 px-3 py-1.5 rounded-full backdrop-blur-md border border-border/20 w-fit">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back
               </Link>
 

@@ -18,7 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   const navItems = [
-    { path: "/", label: "Top Stories", icon: Newspaper },
+    { path: "/home", label: "Top Stories", icon: Newspaper },
     { path: "/brief", label: "Daily Brief", icon: BookOpen },
     { path: "/ask", label: "Ask AI", icon: MessageSquare },
     { path: "/upload", label: "Scan News", icon: Upload },
@@ -37,7 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/home" className="flex items-center gap-3 group">
             <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:border-primary/50 transition-colors">
               <img 
                 src={`${import.meta.env.BASE_URL}images/logo-mark.png`} 

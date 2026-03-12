@@ -78,7 +78,7 @@ export default function BriefPage() {
             <Globe className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-40" />
             <p className="font-medium mb-2">Brief unavailable</p>
             <p className="text-sm text-muted-foreground mb-6">Make sure articles are indexed before generating a brief.</p>
-            <Link href="/">
+            <Link href="/home">
               <button className="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
                 Browse articles first
               </button>
@@ -186,7 +186,7 @@ export default function BriefPage() {
               transition={{ delay: 0.45 }}
               className="flex flex-col sm:flex-row gap-3 pt-4"
             >
-              <Link href="/" className="flex-1">
+              <Link href="/home" className="flex-1">
                 <button className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors">
                   <BookOpen className="w-4 h-4" /> Browse Full Stories
                 </button>
