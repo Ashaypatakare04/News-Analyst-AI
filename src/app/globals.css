@@ -1,0 +1,322 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  :root {
+    --background: 255 15% 5%; /* Deep Obsidian */
+    --foreground: 210 20% 98%;
+    --card: 255 15% 7%;
+    --card-foreground: 210 20% 98%;
+    --popover: 255 15% 5%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 263 70% 50%; /* Deep Amethyst */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 255 15% 10%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 255 15% 12%;
+    --muted-foreground: 210 10% 65%;
+    --accent: 263 70% 20%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 255 15% 12%;
+    --input: 255 15% 12%;
+    --ring: 263 70% 50%;
+    --radius: 0rem;
+    --prestige-border: 255 15% 15%;
+    --intelligence-glow: 263 70% 50% / 0.15;
+
+    --font-inter: 'Inter Variable', 'Inter', system-ui, sans-serif;
+    --font-mono: 'Geist Mono', 'Space Mono', 'JetBrains Mono', monospace;
+    --font-playfair: 'Playfair Display', serif;
+
+    --glow: hsl(263 70% 50% / 0.1); 
+    --cursor-glow: 263 70% 50%;
+    
+    /* Bento Grid Tokens */
+    --bento-gap: 2rem;
+    --bento-radius: 0.25rem;
+
+    /* Executive Spacing */
+    --section-gap: 12rem;
+    --container-max: 80rem;
+    
+    /* Editorial Typography */
+    --line-height-editorial: 1.7;
+    --letter-spacing-editorial: -0.015em;
+  }
+
+  .warm {
+    --background: 45 30% 98%; /* Creamsilk */
+    --foreground: 210 20% 4%;
+    --card: 45 25% 96%;
+    --card-foreground: 210 20% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 4%;
+    --primary: 43 33% 45%; /* Brushed Gold */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 45 20% 95%;
+    --secondary-foreground: 210 20% 12%;
+    --muted: 45 10% 92%;
+    --muted-foreground: 210 10% 40%;
+    --accent: 43 33% 90%;
+    --accent-foreground: 43 33% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 45 20% 85%;
+    --input: 45 20% 85%;
+    --ring: 43 33% 45%;
+    --prestige-border: 45 20% 85%;
+    --intelligence-glow: 43 33% 45% / 0.15;
+    
+    --glow: hsl(43 33% 45% / 0.1);
+    --cursor-glow: 43 33% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-[hsl(var(--border))];
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30 selection:text-primary transition-[background-color,color,border-color] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)];
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tighter;
+  }
+}
+
+/* Prestige Components */
+
+.glass {
+  @apply bg-card/20 backdrop-blur-2xl border-white/[0.03] border shadow-2xl transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)];
+  box-shadow: 
+    0 20px 80px -20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.02);
+}
+
+.dark .glass {
+  @apply bg-black/40 backdrop-blur-3xl border-white/[0.05] shadow-[0_30px_60px_rgba(0,0,0,0.8)];
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Neuro-Beam: Border Tracing Animation */
+.neuro-beam {
+  position: relative;
+  overflow: hidden;
+}
+
+.neuro-beam::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 120deg,
+    hsla(var(--primary), 0.5) 180deg,
+    transparent 240deg,
+    transparent 360deg
+  );
+  animation: beam-rotate 4s linear infinite;
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.neuro-beam::before {
+  @apply opacity-100;
+}
+
+.neuro-beam-inner {
+  @apply relative z-10 bg-background/95 h-full w-full;
+}
+
+@keyframes beam-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Bento Grid System */
+.bento-grid {
+  display: grid;
+  gap: var(--bento-gap);
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.bento-cell {
+  @apply bg-card/40 backdrop-blur-2xl border-white/10 border shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] rounded-[var(--bento-radius)] relative overflow-hidden;
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.shadow-prestige {
+  box-shadow: 
+    0 0 0 1px hsla(var(--border), 0.05),
+    0 4px 12px hsla(0, 0%, 0%, 0.03),
+    0 24px 48px hsla(0, 0%, 0%, 0.05);
+}
+
+.dark .shadow-prestige {
+  box-shadow: 
+    0 0 0 1px hsla(var(--border), 0.1),
+    0 20px 40px -10px rgba(0, 0, 0, 0.4),
+    0 40px 80px -20px rgba(0, 0, 0, 0.3);
+}
+
+/* Mechanical Spring Physics (Mock Classes) */
+.spring-entrance {
+  animation: spring-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes spring-in {
+  from { opacity: 0; transform: scale(0.95) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Typography Overrides */
+.font-mono {
+  @apply tracking-tight font-medium;
+  font-family: var(--font-mono);
+}
+
+.text-editorial {
+  line-height: var(--line-height-editorial);
+  letter-spacing: var(--letter-spacing-editorial);
+}
+
+.text-prestige {
+  @apply uppercase tracking-[0.6em] font-bold text-[9px] opacity-40;
+}
+
+/* Animated Mesh Evolution */
+
+.mesh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(at 10% 10%, hsla(var(--primary), 0.1) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, hsla(var(--primary), 0.05) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, hsla(var(--primary), 0.05) 0px, transparent 70%),
+    radial-gradient(at 10% 90%, hsla(var(--primary), 0.1) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, hsla(var(--primary), 0.05) 0px, transparent 50%);
+  filter: blur(80px);
+  animation: mesh-drift 40s ease-in-out infinite alternate;
+  mix-blend-mode: soft-light;
+}
+
+.dark .mesh-bg {
+  background: 
+    radial-gradient(at 0% 0%, hsla(255, 70%, 65%, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(280, 100%, 75%, 0.1) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, hsla(255, 100%, 75%, 0.05) 0px, transparent 80%);
+  mix-blend-mode: screen;
+}
+
+
+@keyframes mesh-drift {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(2%, 2%); }
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+}
+
+.dark .bg-noise {
+  opacity: 0.05;
+}
+
+/* Typography Gradient */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-br from-foreground via-foreground to-primary font-bold;
+}
+
+/* Floating Physics - Precise Timings */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.float-slow { animation: float 6s ease-in-out infinite; }
+.float-medium { animation: float 4.5s ease-in-out infinite; }
+.float-fast { animation: float 3.5s ease-in-out infinite; }
+
+.animate-pulse-live {
+  animation: pulse-live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.95); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
