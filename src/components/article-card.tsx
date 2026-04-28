@@ -20,9 +20,15 @@ export function getCategoryColor(category: string) {
   return map[category] || "text-primary/60 border-primary/20";
 }
 
+const DEFAULT_IMAGES = [
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop", // Option 3A: Highrise
+  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2000&auto=format&fit=crop", // Option 3B: Financial Boards
+  "https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=2000&auto=format&fit=crop"  // Option 3C: Architecture
+];
+
 export function ArticleCard({ article, index = 0, speed }: { article: Article; index?: number; speed?: "slow" | "medium" | "fast" }) {
   const { theme } = useTheme();
-  const imageUrl = article.imageUrl || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=600&fit=crop";
+  const imageUrl = article.imageUrl || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
 
   return (
     <AntiGravityCard speed={speed} className="w-full h-full neuro-beam rounded-sm overflow-hidden">

@@ -207,9 +207,15 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bento-cell neuro-beam h-full p-12 bg-primary/[0.01] flex flex-col group/intel"
+              className="bento-cell neuro-beam h-full p-12 bg-primary/[0.01] flex flex-col group/intel overflow-hidden relative"
             >
-              <div className="neuro-beam-inner flex flex-col h-full">
+              {/* Intelligence Map Background */}
+              <div className="absolute inset-0 z-0 opacity-20 mix-blend-screen pointer-events-none group-hover/intel:opacity-30 transition-opacity duration-1000">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop" alt="Topographic Intelligence Map" className="w-full h-full object-cover" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent z-0 pointer-events-none" />
+
+              <div className="neuro-beam-inner flex flex-col h-full relative z-10">
                 <div className="flex items-center justify-between mb-12">
                   <div className="flex items-center gap-4 text-xs font-mono font-bold uppercase tracking-[0.5em] text-primary/60">
                     <Activity className="w-4 h-4 animate-pulse-live" /> Console_Status
