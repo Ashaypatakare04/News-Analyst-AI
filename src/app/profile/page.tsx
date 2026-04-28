@@ -43,16 +43,16 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <div className="min-h-screen pt-32 pb-48 px-6">
+      <div className="min-h-screen pt-24 md:pt-32 pb-32 md:pb-48 px-6">
         <div className="max-w-6xl mx-auto">
           
           {/* Header Identity */}
-          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-12 mb-24">
+          <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 md:gap-12 mb-16 md:mb-24">
             <div className="space-y-6">
               <div className="flex items-center gap-4 text-primary/40 text-[10px] font-bold uppercase tracking-[0.5em]">
                 <Fingerprint className="w-4 h-4" /> Personnel Access Terminal
               </div>
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter text-gradient leading-none">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-gradient leading-none">
                 Intelligence Profile
               </h1>
               <p className="text-muted-foreground/40 text-sm font-medium tracking-tight">
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                                     <span className="text-muted-foreground/20">•</span>
                                     <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/40">{item.source}</span>
                                   </div>
-                                  <h4 className="text-lg font-bold tracking-tight text-foreground/80 group-hover:text-primary transition-colors">{item.title}</h4>
+                                  <h4 className="text-base sm:text-lg font-bold tracking-tight text-foreground/80 group-hover:text-primary transition-colors line-clamp-2 md:line-clamp-none">{item.title}</h4>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-2 transition-all" />
                               </div>

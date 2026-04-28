@@ -25,8 +25,14 @@ export default function AskPage() {
       content: "Agentic Intel Analyst at your service. I have synthesized data from global news streams and historical archives. How may I assist your inquiry today?" 
     }
   ]);
-  const [input, setInput] = useState("");
-  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  const [synthesisStep, setSynthesisStep] = useState(0);
+  
+  const synthesisPhases = [
+    "SCANNING_GLOBAL_INDICES...",
+    "EXTRACTING_SEMANTIC_VECTORS...",
+    "ESTABLISHING_TRUTH_ONTOLOGY...",
+    "SYNTHESIZING_AGENTIC_RESPONSE..."
+  ];
 
   const { mutate: askQuestion, isPending } = useAskQuestion({
     mutation: {
@@ -46,6 +52,21 @@ export default function AskPage() {
       }
     }
   });
+
+  const [input, setInput] = useState("");
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let interval: any;
+    if (isPending) {
+      interval = setInterval(() => {
+        setSynthesisStep(prev => (prev + 1) % synthesisPhases.length);
+      }, 1500);
+    } else {
+      setSynthesisStep(0);
+    }
+    return () => clearInterval(interval);
+  }, [isPending]);
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -69,7 +90,7 @@ export default function AskPage() {
 
   return (
     <Layout>
-      <div className="flex-1 flex flex-col h-[calc(100vh-80px)] max-h-screen overflow-hidden bg-background relative selection:bg-primary/20 cursor-none">
+      <div className="flex-1 flex flex-col h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] max-h-screen overflow-hidden bg-background relative selection:bg-primary/20 md:cursor-none">
         
         {/* Background Decor */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
@@ -78,15 +99,15 @@ export default function AskPage() {
         </div>
 
         {/* Header */}
-        <header className="relative z-10 shrink-0 py-12 px-10 border-b border-white/5 bg-background/40 backdrop-blur-xl flex flex-col items-center justify-center">
-          <div className="flex items-center gap-6 text-primary/40 text-[10px] font-mono font-bold uppercase tracking-[0.6em] mb-8">
-            <div className="w-12 h-px bg-primary/20" />
+        <header className="relative z-10 shrink-0 py-8 sm:py-12 px-6 sm:px-10 border-b border-white/5 bg-background/40 backdrop-blur-xl flex flex-col items-center justify-center">
+          <div className="flex items-center gap-6 text-primary/40 text-[10px] font-mono font-bold uppercase tracking-[0.4em] sm:tracking-[0.6em] mb-4 sm:mb-8">
+            <div className="hidden sm:block w-12 h-px bg-primary/20" />
             <Activity className="w-4 h-4 animate-pulse-live" />
             Probe_Protocol_Active
-            <div className="w-12 h-px bg-primary/20" />
+            <div className="hidden sm:block w-12 h-px bg-primary/20" />
           </div>
           <h1 className={cn(
-            "text-5xl md:text-7xl font-bold text-gradient tracking-tighter",
+            "text-4xl sm:text-5xl md:text-7xl font-bold text-gradient tracking-tighter",
             theme !== "dark" && "font-serif"
           )}>
             Inquiry <span className="italic font-light opacity-50">Terminal</span>
@@ -111,9 +132,9 @@ export default function AskPage() {
                 >
                   {msg.role === "assistant" && (
                     <div className={cn(
-                      "w-14 h-14 border-l border-t border-primary/20 flex items-center justify-center shrink-0 glass shadow-2xl font-mono",
+                      "w-10 h-10 sm:w-14 sm:h-14 border-l border-t border-primary/20 flex items-center justify-center shrink-0 glass shadow-2xl font-mono",
                     )}>
-                      <span className="text-primary font-bold text-2xl">A</span>
+                      <span className="text-primary font-bold text-lg sm:text-2xl">A</span>
                     </div>
                   )}
                   
@@ -123,7 +144,7 @@ export default function AskPage() {
                       msg.role === "user" ? "text-right" : "text-left"
                     )}>
                       <div className={cn(
-                        "neuro-beam-inner p-10 text-lg leading-relaxed transition-all",
+                        "neuro-beam-inner p-6 sm:p-10 text-base sm:text-lg leading-relaxed transition-all",
                         msg.role === "user" 
                           ? "italic font-light bg-primary/[0.03]" 
                           : cn("prose prose-invert max-w-none", theme !== "dark" && "font-serif")
@@ -186,9 +207,9 @@ export default function AskPage() {
                   <div className="w-14 h-14 border-l border-t border-primary/20 flex items-center justify-center shrink-0 animate-pulse bg-primary/5">
                     <Brain className="w-6 h-6 text-primary/40" />
                   </div>
-                  <div className="glass border-white/5 p-10 flex items-center gap-6 w-80 shadow-inner italic text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30">
+                  <div className="glass border-white/5 p-10 flex items-center gap-6 w-96 shadow-inner italic text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30">
                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                     Analyzing_Vectors_Node_42...
+                     {synthesisPhases[synthesisStep]}
                   </div>
                 </motion.div>
               )}
@@ -198,7 +219,7 @@ export default function AskPage() {
         </div>
 
         {/* Input Area */}
-        <div className="relative z-20 shrink-0 p-10 md:p-16 border-t border-white/10 bg-background/90 backdrop-blur-3xl shadow-[0_-30px_100px_rgba(0,0,0,0.8)]">
+        <div className="relative z-20 shrink-0 p-6 md:p-16 border-t border-white/10 bg-background/90 backdrop-blur-3xl shadow-[0_-30px_100px_rgba(0,0,0,0.8)]">
           <div className="max-w-5xl mx-auto">
             <div className="relative mb-8 flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -210,9 +231,9 @@ export default function AskPage() {
                 type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                placeholder="QUERY_NEURAL_PIPELINE..."
+                placeholder="QUERY_NEURAL..."
                 disabled={isPending}
-                className="w-full bg-transparent border-none py-6 pr-32 text-2xl font-light tracking-tight focus:outline-none transition-all placeholder:text-muted-foreground/10 placeholder:uppercase placeholder:font-mono placeholder:font-bold placeholder:text-[11px] placeholder:tracking-[0.6em]"
+                className="w-full bg-transparent border-none py-4 sm:py-6 pr-20 sm:pr-32 text-lg sm:text-2xl font-light tracking-tight focus:outline-none transition-all placeholder:text-muted-foreground/10 placeholder:uppercase placeholder:font-mono placeholder:font-bold placeholder:text-[11px] placeholder:tracking-[0.6em]"
               />
               <button
                 type="submit"

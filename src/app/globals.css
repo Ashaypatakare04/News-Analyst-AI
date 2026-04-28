@@ -79,6 +79,10 @@
     /* Editorial Typography */
     --line-height-editorial: 1.7;
     --letter-spacing-editorial: -0.015em;
+
+    /* Responsive Spacing Strategy */
+    --section-gap: clamp(4rem, 12vw, 12rem);
+    --bento-gap: clamp(1rem, 2vw, 2rem);
   }
 
   .warm {
@@ -114,7 +118,7 @@
     @apply border-[hsl(var(--border))];
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30 selection:text-primary transition-[background-color,color,border-color] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)];
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30 selection:text-primary transition-[background-color,color,border-color] duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-x-hidden;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tighter;
@@ -135,40 +139,54 @@
   border-top-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Neuro-Beam: Border Tracing Animation */
+/* Neuro-Beam: High-Velocity Border Tracing */
 .neuro-beam {
   position: relative;
   overflow: hidden;
+  transition: all 0.5s ease;
 }
 
 .neuro-beam::before {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  inset: -100%;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    transparent 120deg,
-    hsla(var(--primary), 0.5) 180deg,
-    transparent 240deg,
+    transparent 160deg,
+    hsla(var(--primary), 0.2) 180deg,
+    transparent 200deg,
     transparent 360deg
   );
-  animation: beam-rotate 4s linear infinite;
-  opacity: 0;
-  transition: opacity 0.5s;
+  animation: beam-rotate 8s linear infinite;
+  opacity: 0.5;
   pointer-events: none;
   z-index: 0;
 }
 
-.neuro-beam::before {
-  @apply opacity-100;
+/* Cursor-Tracing Surface */
+.neuro-beam::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    400px circle at var(--mouse-x) var(--mouse-y),
+    hsla(var(--primary), 0.08),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.neuro-beam:hover::after {
+  opacity: 1;
 }
 
 .neuro-beam-inner {
-  @apply relative z-10 bg-background/95 h-full w-full;
+  @apply relative z-10 bg-card/80 backdrop-blur-md h-full w-full;
+  border: 1px solid hsla(var(--primary), 0.05);
 }
 
 @keyframes beam-rotate {
@@ -180,7 +198,19 @@
 .bento-grid {
   display: grid;
   gap: var(--bento-gap);
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
 }
 
 .bento-cell {
@@ -319,4 +349,52 @@
     transparent 100%
   );
   animation: shimmer 2s infinite;
+}
+/* Gemini-Inspired Iridescent Shimmer */
+.skeleton-gemini {
+  position: relative;
+  overflow: hidden;
+  background: hsla(var(--muted), 0.4);
+}
+
+.skeleton-gemini::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsla(217, 100%, 50%, 0.05) 20%,
+    hsla(280, 100%, 50%, 0.1) 40%,
+    hsla(330, 100%, 50%, 0.05) 60%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: gemini-shimmer 3s infinite linear;
+}
+
+@keyframes gemini-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Page Transition Container */
+.page-transition-wrapper {
+  position: relative;
+  will-change: transform, opacity, filter;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Custom Cursor Hitbox expansion */
+.cursor-hover-expansion {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .cursor-hover-expansion {
+  transform: scale(1.05);
 }

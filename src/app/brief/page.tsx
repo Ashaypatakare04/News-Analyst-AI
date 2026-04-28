@@ -15,6 +15,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { AntiGravityCard } from "@/components/motion/anti-gravity-card";
 import { MagneticButton } from "@/components/motion/magnetic-button";
+import { BriefSkeleton } from "@/components/ui/bento-skeleton";
 
 export default function BriefPage() {
   const { theme } = useTheme();
@@ -35,7 +36,7 @@ export default function BriefPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background relative selection:bg-primary/20 cursor-none">
+      <div className="min-h-screen bg-background relative selection:bg-primary/20 md:cursor-none">
         
         {/* Background Decor */}
         <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
@@ -44,23 +45,25 @@ export default function BriefPage() {
         </div>
 
         {/* Institutional Status Bar */}
-        <div className="sticky top-20 z-40 bg-background/60 backdrop-blur-md border-b border-white/[0.03] text-[9px] py-4 px-6 lg:px-8 overflow-x-auto whitespace-nowrap hide-scrollbar shadow-sm">
-          <div className="flex items-center gap-12 max-w-7xl mx-auto w-full font-bold uppercase tracking-[0.4em] text-primary/40">
+        <div className="sticky top-20 md:top-28 z-40 bg-background/60 backdrop-blur-md border-b border-white/[0.03] text-[9px] py-4 px-6 lg:px-8 overflow-x-auto whitespace-nowrap hide-scrollbar shadow-sm">
+          <div className="flex items-center gap-12 max-w-7xl mx-auto w-fit md:w-full font-bold uppercase tracking-[0.4em] text-primary/40">
             <span className="text-foreground/80">{today}</span>
-            <div className="flex items-center gap-10">
+            <div className="flex items-center gap-6 sm:gap-10">
               <span className="flex items-center gap-3">
                 <Target className="w-3.5 h-3.5 opacity-40" />
-                Strategic Synthesis Active
+                <span className="hidden sm:inline">Strategic Synthesis Active</span>
+                <span className="sm:hidden">SYNC_ACTIVE</span>
               </span>
               <span className="flex items-center gap-3">
                 <Activity className="w-3.5 h-3.5 opacity-40" /> 
-                Signal Confidence: 94%
+                <span className="hidden sm:inline">Signal Confidence: 94%</span>
+                <span className="sm:hidden">CONF_94%</span>
               </span>
             </div>
           </div>
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-6 py-24 w-full">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 py-12 md:py-24 w-full">
           
           {/* Header */}
           <motion.header
@@ -77,7 +80,7 @@ export default function BriefPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-16">
               <div className="space-y-6">
                 <h1 className={cn(
-                  "text-6xl md:text-8xl font-bold text-gradient leading-[0.95] tracking-tighter",
+                  "text-4xl sm:text-6xl md:text-8xl font-bold text-gradient leading-[0.95] tracking-tighter",
                   mounted && theme !== "dark" && "font-serif"
                 )}>
                   The <span className="italic font-light opacity-30">Executive</span> Brief
@@ -100,19 +103,7 @@ export default function BriefPage() {
           {/* States Rendering */}
           <AnimatePresence mode="wait">
             {isLoading ? (
-              <motion.div 
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="py-60 flex flex-col items-center justify-center gap-10 glass border-dashed border-white/5"
-              >
-                <div className="w-16 h-16 border-l border-t border-primary/40 animate-spin" />
-                <div className="flex flex-col items-center gap-3">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.6em] text-primary/40 animate-pulse">Materializing Signal Matrix</p>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.4em] text-white/5 italic">Synthesized via Neural Primitive v8</p>
-                </div>
-              </motion.div>
+               <BriefSkeleton />
             ) : isError ? (
               <motion.div 
                 key="error"
@@ -145,7 +136,7 @@ export default function BriefPage() {
                        <ScanLine className="w-4 h-4" /> Core Synthesis
                     </div>
                     <p className={cn(
-                      "text-4xl md:text-6xl font-bold text-foreground leading-[1.2] italic tracking-tight text-gradient",
+                      "text-3xl sm:text-4xl md:text-6xl font-bold text-foreground leading-[1.2] italic tracking-tight text-gradient",
                       mounted && theme !== "dark" && "font-serif"
                     )}>
                       "{brief.strategicInsight}"

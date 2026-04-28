@@ -8,19 +8,21 @@ import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
 import { GlowCursor } from "./motion/glow-cursor";
+import { PrecisionPointer } from "./motion/precision-pointer";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isLoading, isAuthenticated, logout } = useAuth();
-
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
     };
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("mousemove", handleMouseMove);
@@ -38,15 +40,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col relative selection:bg-primary/20 overflow-x-hidden cursor-none">
-      <GlowCursor />
-      {/* Refractive Lens Effect */}
-      <div 
-        className="fixed inset-0 pointer-events-none z-[100] transition-opacity duration-1000"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, hsl(var(--primary) / 0.035), transparent 80%)`
-        }}
-      />
+    <div className="min-h-screen flex flex-col relative selection:bg-primary/20 overflow-x-hidden md:cursor-none">
+      {/* Cursors and effects temporarily disabled for loop stability */}
       
       {/* Noise Overlay */}
       <div className="fixed inset-0 pointer-events-none z-[99] bg-noise opacity-[0.03] mix-blend-overlay" />
@@ -126,16 +121,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle />
+          <div className="flex items-center gap-4">
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
+            <button
+              className="md:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground relative z-[60]"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X /> : <Menu />}
+            </button>
           </div>
-
-          <button
-            className="md:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
         </div>
       </header>
 
@@ -200,7 +196,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 pt-[72px] flex flex-col">
+      <main className="flex-1 pt-20 md:pt-28 flex flex-col relative">
         {children}
       </main>
 

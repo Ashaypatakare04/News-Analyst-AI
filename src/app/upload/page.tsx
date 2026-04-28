@@ -52,7 +52,7 @@ export default function UploadPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background relative selection:bg-primary/20 cursor-none overflow-hidden">
+      <div className="min-h-screen bg-background relative selection:bg-primary/20 md:cursor-none overflow-hidden">
         
         {/* Background Decor */}
         <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
@@ -61,13 +61,14 @@ export default function UploadPage() {
         </div>
 
         {/* Institutional Status Bar */}
-        <div className="sticky top-20 z-40 bg-background/60 backdrop-blur-md border-b border-white/[0.03] text-[9px] py-4 px-6 lg:px-8 overflow-x-auto whitespace-nowrap hide-scrollbar shadow-sm">
-          <div className="flex items-center gap-12 max-w-7xl mx-auto w-full font-bold uppercase tracking-[0.4em] text-primary/40">
+        <div className="sticky top-20 md:top-28 z-40 bg-background/60 backdrop-blur-md border-b border-white/[0.03] text-[9px] py-4 px-6 lg:px-8 overflow-x-auto whitespace-nowrap hide-scrollbar shadow-sm">
+          <div className="flex items-center gap-12 max-w-7xl mx-auto w-fit md:w-full font-bold uppercase tracking-[0.4em] text-primary/40">
             <span className="flex items-center gap-3">
               <ScanLine className="w-3.5 h-3.5 opacity-40 animate-pulse-live" />
-              Vision Synthesis Pipeline: ACTIVE
+              <span className="hidden sm:inline">Vision Synthesis Pipeline: ACTIVE</span>
+              <span className="sm:hidden">VISION_ACTIVE</span>
             </span>
-            <span className="flex items-center gap-3 opacity-20">
+            <span className="flex items-center gap-3 opacity-20 hidden md:inline">
               OCR Engine: Institutional Grade v8
             </span>
             <div className="flex items-center gap-3 ml-auto">
@@ -77,14 +78,14 @@ export default function UploadPage() {
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-24 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 py-16 md:py-24 w-full">
           <header className="mb-24">
             <div className="flex items-center gap-6 text-primary/40 text-[10px] font-bold uppercase tracking-[0.6em] mb-12">
               <div className="w-16 h-px bg-primary/20" />
               Media Digitalization Directives
             </div>
             <h1 className={cn(
-              "text-6xl md:text-8xl font-bold text-gradient leading-[0.9] tracking-tighter mb-10",
+              "text-5xl sm:text-7xl md:text-8xl font-bold text-gradient leading-[0.9] tracking-tighter mb-10",
               theme !== "dark" && "font-serif"
             )}>
               Data <span className="italic font-light opacity-30">Intake</span>
@@ -94,7 +95,7 @@ export default function UploadPage() {
             </p>
           </header>
 
-          <div className="grid lg:grid-cols-2 gap-24 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
             
             {/* Left Column - Terminal Upload */}
             <div className="space-y-16">
@@ -102,7 +103,7 @@ export default function UploadPage() {
                 <div 
                   {...getRootProps()} 
                   className={cn(
-                    "glass border-white/5 p-16 text-center cursor-pointer transition-all duration-700 relative group/dropzone shadow-2xl overflow-hidden min-h-[500px] flex items-center justify-center",
+                    "glass border-white/5 p-8 sm:p-16 text-center cursor-pointer transition-all duration-700 relative group/dropzone shadow-2xl overflow-hidden min-h-[300px] sm:min-h-[500px] flex items-center justify-center",
                     isDragActive ? "border-primary/40 bg-primary/[0.02]" : "hover:border-primary/20 hover:bg-white/[0.01]"
                   )}
                 >
@@ -202,7 +203,7 @@ export default function UploadPage() {
                           <Brain className="w-5 h-5" /> Neural Synthesis Summary
                         </div>
                         <p className={cn(
-                          "text-3xl font-bold text-foreground leading-[1.3] italic tracking-tight text-gradient",
+                          "text-2xl sm:text-3xl font-bold text-foreground leading-[1.3] italic tracking-tight text-gradient",
                           theme !== "dark" && "font-serif"
                         )}>
                           "{result.summary}"

@@ -76,10 +76,9 @@ async function callAIResiliently(prompt: string, retryCount = 0): Promise<string
   } catch (error: any) {
     const isRateLimit = error?.status === 429 || error?.message?.includes("429") || error?.errorDetails?.some((d: any) => d.reason === "RATE_LIMIT_EXCEEDED");
     
-    if (isRateLimit && retryCount < 2) {
-      const delay = Math.pow(2, retryCount) * 2000;
-      console.warn(`Gemini rate limit hit. Retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+    if (isRateLimit && retryCount < 1) {
+      console.warn("Gemini rate limit hit. Retrying once...");
+      await new Promise(resolve => setTimeout(resolve, 2000));
       return callAIResiliently(prompt, retryCount + 1);
     }
 

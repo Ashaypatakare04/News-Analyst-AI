@@ -47,12 +47,17 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [emailFocused, setEmailFocused] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isLoading && isAuthenticated) {
       router.push("/home");
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, mounted]);
 
   function handleEmailSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,7 +65,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col selection:bg-primary/20 cursor-none relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col selection:bg-primary/20 md:cursor-none relative overflow-hidden">
       
       {/* Background Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
@@ -69,7 +74,7 @@ export default function LoginPage() {
       </div>
 
       {/* Minimal Header */}
-      <header className="relative z-10 flex items-center justify-between px-10 py-12">
+      <header className="relative z-10 flex flex-col sm:flex-row items-center justify-between px-6 sm:px-10 py-8 sm:py-12 gap-8">
         <Link href="/" className="group flex items-center gap-6">
           <div className="w-12 h-12 border-l border-t border-primary/20 flex items-center justify-center group-hover:border-primary transition-all glass">
              <span className={cn("text-xl font-bold text-primary", theme !== "dark" && "font-serif")}>A</span>
@@ -87,8 +92,8 @@ export default function LoginPage() {
       </header>
 
       {/* Main Container */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-10 py-24">
-        <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-32 items-center">
+      <main className="relative z-10 flex-1 flex items-center justify-center px-6 sm:px-10 py-16 md:py-24">
+        <div className="w-full max-w-7xl grid lg:grid-cols-2 gap-16 lg:gap-32 items-center">
 
           {/* Institutional Context */}
           <motion.div
@@ -102,8 +107,8 @@ export default function LoginPage() {
                 <div className="w-2 h-2 rounded-full bg-primary/60 animate-pulse-live" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.6em] text-primary/40 group-hover:tracking-[0.7em] transition-all">Identity Verification Required</span>
               </div>
-              <h2 className={cn(
-                "text-6xl md:text-8xl font-bold text-foreground leading-[0.9] tracking-tighter text-gradient",
+               <h2 className={cn(
+                "text-5xl sm:text-7xl md:text-8xl font-bold text-foreground leading-[0.9] tracking-tighter text-gradient",
                 theme !== "dark" && "font-serif"
               )}>
                 Access<br />
@@ -140,7 +145,7 @@ export default function LoginPage() {
             className="flex justify-center lg:justify-end"
           >
             <AntiGravityCard intensity={15} float={true} className="w-full max-w-xl">
-              <div className="glass p-16 border-white/5 shadow-2xl relative group">
+              <div className="glass p-8 sm:p-16 border-white/5 shadow-2xl relative group">
                 {/* Visual Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
                 

@@ -34,21 +34,23 @@ type Tab = "summary" | "timeline" | "article" | "sources";
 
 function DetailTrustMeter({ score, label }: { score: number; label: string }) {
   return (
-    <div className="flex flex-col gap-3 min-w-[140px]">
-      <div className="text-4xl font-mono font-bold tabular-nums text-foreground/80 tracking-tighter">{score}%</div>
-      <div className="w-full bg-white/5 h-[2px]">
-        <motion.div 
-          initial={{ width: 0 }}
-          animate={{ width: `${score}%` }}
-          transition={{ 
-            type: "spring",
-            stiffness: 100,
-            damping: 20
-          }}
-          className="h-full bg-primary shadow-[0_0_15px_hsla(var(--primary),0.5)]" 
-        />
+    <div className="neuro-beam p-4 min-w-[160px] rounded-sm group">
+      <div className="neuro-beam-inner flex flex-col gap-3 p-4">
+        <div className="text-4xl font-mono font-bold tabular-nums text-foreground/80 tracking-tighter">{score}%</div>
+        <div className="w-full bg-white/5 h-[2px]">
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: `${score}%` }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 20
+            }}
+            className="h-full bg-primary shadow-[0_0_15px_hsla(var(--primary),0.5)]" 
+          />
+        </div>
+        <div className="text-[10px] font-mono text-primary/40 font-bold uppercase tracking-[0.4em]">{label}</div>
       </div>
-      <div className="text-[10px] font-mono text-primary/40 font-bold uppercase tracking-[0.4em]">{label}</div>
     </div>
   );
 }
@@ -72,7 +74,6 @@ export default function ArticlePage() {
       const savedHistory = localStorage.getItem("news_history");
       let historyArr = savedHistory ? JSON.parse(savedHistory) : [];
       
-      // Prevent duplicates and keep last 10
       historyArr = historyArr.filter((h: any) => h.id !== articleId);
       historyArr.unshift({
         id: articleId,
@@ -84,6 +85,13 @@ export default function ArticlePage() {
       
       localStorage.setItem("news_history", JSON.stringify(historyArr.slice(0, 10)));
     }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [article, articleId]);
 
   const onSuccess = (message: string) => {
@@ -166,7 +174,7 @@ export default function ArticlePage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-background relative selection:bg-primary/20 cursor-none">
+      <div className="min-h-screen bg-background relative selection:bg-primary/20 md:cursor-none">
         
         {/* Background Decor */}
         <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
@@ -177,9 +185,9 @@ export default function ArticlePage() {
         {/* Content Layer */}
         <div className="relative z-10">
           {/* Header Metadata */}
-          <div className="max-w-4xl mx-auto px-6 pt-24 pb-16">
-              <Link href="/home" className="inline-flex items-center gap-4 text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40 hover:text-primary mb-16 transition-all group">
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" /> Back_to_Intelligence_Index
+          <div className="max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-12 md:pb-16">
+              <Link href="/home" className="inline-flex items-center gap-4 text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40 hover:text-primary mb-12 md:mb-16 transition-all group">
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" /> Back_to_Index
               </Link>
               
               <div className="flex items-center gap-6 mb-10">
@@ -193,7 +201,7 @@ export default function ArticlePage() {
               </div>
 
               <h1 className={cn(
-                "text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.9] mb-16 text-gradient tracking-tighter shadow-sm",
+                "text-4xl sm:text-6xl md:text-8xl font-bold leading-[1.1] md:leading-[0.9] mb-12 md:mb-16 text-gradient tracking-tighter shadow-sm",
                 theme !== "dark" && "font-serif"
               )}>
                 {article.title}
@@ -219,19 +227,19 @@ export default function ArticlePage() {
           </div>
 
           {/* Feature Image - Cinematic Anti-Gravity */}
-          <div className="px-6 lg:px-12 mb-24">
+          <div className="px-6 lg:px-12 mb-16 md:mb-24">
             <AntiGravityCard intensity={5} float={false} className="max-w-7xl mx-auto rounded-sm overflow-hidden neuro-beam shadow-prestige">
-              <div className="neuro-beam-inner w-full h-[65vh] max-h-[900px] overflow-hidden">
+              <div className="neuro-beam-inner w-full h-[40vh] md:h-[65vh] max-h-[900px] overflow-hidden">
                 <img src={imageUrl} alt={article.title} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[3000ms] ease-out scale-100 hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-40" />
               </div>
             </AntiGravityCard>
           </div>
 
-          <div className="max-w-4xl mx-auto px-6 pb-48">
+          <div className="max-w-4xl mx-auto px-6 pb-24 md:pb-48">
             
             {/* Executive Toolbar - Static but High-End */}
-            <div className="sticky top-24 z-40 glass border-white/5 p-3 mb-20 flex items-center justify-between gap-2 overflow-x-auto shadow-2xl hide-scrollbar rounded-full">
+            <div className="sticky top-20 md:top-28 z-40 glass border-white/5 p-2 md:p-3 mb-16 md:mb-20 flex items-center justify-between gap-2 overflow-x-auto shadow-2xl hide-scrollbar rounded-full max-w-full">
               <div className="flex items-center gap-2 pl-2">
                 <MagneticButton
                   onClick={() => sumMut.mutate({ id: articleId })}
@@ -239,7 +247,7 @@ export default function ArticlePage() {
                   className="px-6 py-3 hover:bg-white/[0.02] text-primary text-[11px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                   {sumMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Brain className="w-3.5 h-3.5" />}
-                  Synthesis
+                  NEURAL_SYNTHESIS
                 </MagneticButton>
 
                 <MagneticButton
@@ -248,7 +256,7 @@ export default function ArticlePage() {
                   className="px-6 py-3 hover:bg-white/[0.02] text-foreground text-[11px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                   {verMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" /> : <ShieldCheck className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />}
-                  Verify
+                  VERIFY_INTEGRITY
                 </MagneticButton>
 
                 <MagneticButton
@@ -257,7 +265,7 @@ export default function ArticlePage() {
                   className="px-6 py-3 hover:bg-white/[0.02] text-foreground text-[11px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                   {audMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-primary/60" /> : <Headphones className="w-3.5 h-3.5 opacity-60" />}
-                  Audio_Brief
+                  AUDIO_BRIEF
                 </MagneticButton>
               </div>
 
@@ -354,7 +362,7 @@ export default function ArticlePage() {
                   <motion.div key="summary" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ type: "spring", stiffness: 100, damping: 20 }} className="space-y-24">
                     {article.aiSummary ? (
                       <>
-                        <div className="text-3xl md:text-5xl text-foreground font-serif leading-[1.3] italic font-light tracking-tight drop-shadow-sm">
+                        <div className="text-2xl sm:text-3xl md:text-5xl text-foreground font-serif leading-[1.3] italic font-light tracking-tight drop-shadow-sm">
                           "{article.aiSummary}"
                         </div>
 

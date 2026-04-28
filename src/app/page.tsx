@@ -12,7 +12,7 @@ import {
   BookOpen, Fingerprint, Search, Info,
   Activity, Zap, Brain, MousePointer2, 
   Layers, ChevronDown, CheckCircle2,
-  Lock, TrendingUp, AlertCircle, Target
+  Lock, TrendingUp, AlertCircle, Target, Menu, X
 } from "lucide-react";
 import { AntiGravityCard } from "@/components/motion/anti-gravity-card";
 import { MagneticButton } from "@/components/motion/magnetic-button";
@@ -57,6 +57,7 @@ export default function LandingPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -78,10 +79,14 @@ export default function LandingPage() {
   });
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.push("/home");
+    // Only redirect if we are SURE about the auth state and hydration
+    if (mounted && !isLoading && isAuthenticated) {
+      const timeout = setTimeout(() => {
+        router.push("/home");
+      }, 100);
+      return () => clearTimeout(timeout);
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, mounted]);
 
 
 
@@ -95,16 +100,16 @@ export default function LandingPage() {
 
       {/* Nav Overlay */}
       <header className="fixed top-0 inset-x-0 z-50 bg-background/20 backdrop-blur-xl border-b border-white/[0.03]">
-        <div className="max-w-7xl mx-auto px-8 lg:px-16 flex items-center justify-between h-24">
-          <Link href="/" className="flex items-center gap-8 group">
-             <div className="w-10 h-10 flex items-center justify-center border-l border-t border-primary/10 group-hover:border-primary/40 transition-all duration-1000 glass">
-              <span className="font-serif text-xl font-bold text-primary/80">A</span>
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-16 flex items-center justify-between h-24">
+          <Link href="/" className="flex items-center gap-4 sm:gap-8 group">
+             <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border-l border-t border-primary/10 group-hover:border-primary/40 transition-all duration-1000 glass">
+              <span className="font-serif text-lg sm:text-xl font-bold text-primary/80">A</span>
             </div>
             <span className={cn(
-              "font-bold text-xl tracking-tighter text-foreground/90",
+              "font-bold text-lg sm:text-xl tracking-tighter text-foreground/90",
               mounted && theme !== "dark" && "font-serif"
             )}>
-              AGENTIC<span className="text-primary/30 font-sans font-light tracking-[0.4em] ml-3 text-[10px]">INTEL</span>
+              AGENTIC<span className="text-primary/30 font-sans font-light tracking-[0.2em] sm:tracking-[0.4em] ml-2 sm:ml-3 text-[10px]">INTEL</span>
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-16 text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/30">
@@ -112,14 +117,41 @@ export default function LandingPage() {
             <Link href="/brief" className="hover:text-primary/60 transition-all duration-500">Briefing</Link>
             <Link href="/ask" className="hover:text-primary/60 transition-all duration-500">Consult</Link>
           </nav>
-          <div className="flex items-center gap-8">
+          <div className="hidden sm:flex items-center gap-8">
             <Link href="/login">
               <MagneticButton className="px-10 py-3.5 bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-[0.5em]">
                 Initialize
               </MagneticButton>
             </Link>
           </div>
+          <button 
+            className="md:hidden p-2 text-foreground/60"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-background/95 backdrop-blur-2xl border-b border-white/5 overflow-hidden"
+            >
+              <nav className="flex flex-col p-8 gap-8 text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/40">
+                <Link href="/home" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Neural Index</Link>
+                <Link href="/brief" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Briefing</Link>
+                <Link href="/ask" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Consult</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="pt-4 border-t border-white/5 text-primary">
+                  Initialize Access Terminal
+                </Link>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* 01: The Dawn (Hero) */}
@@ -139,7 +171,7 @@ export default function LandingPage() {
           </div>
 
           <h1 className={cn(
-            "text-6xl sm:text-8xl md:text-9xl font-medium leading-[0.9] mb-16 tracking-tighter text-gradient pb-6",
+            "text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-medium leading-[0.9] mb-12 sm:mb-16 tracking-tighter text-gradient pb-6",
             mounted && theme !== "dark" && "font-serif"
           )}>
             Complexity,<br />
@@ -174,8 +206,8 @@ export default function LandingPage() {
       </section>
 
       {/* 02: The Void (Problem) */}
-      <section className="relative py-80 px-8 lg:px-16 z-20 bg-black/20 backdrop-blur-3xl overflow-hidden">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-32 items-center">
+      <section className="relative py-24 md:py-80 px-6 sm:px-8 lg:px-16 z-20 bg-black/20 backdrop-blur-3xl overflow-hidden">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-16 md:gap-32 items-center">
            <div className="lg:col-span-6 space-y-12">
               <span className="text-prestige">01 // The Obstacle</span>
               <h2 className="text-5xl md:text-6xl font-medium tracking-tighter leading-[1.1]">
@@ -220,7 +252,7 @@ export default function LandingPage() {
       </section>
 
       {/* 03: The Synthesis (Solution) */}
-      <section className="relative py-80 px-8 lg:px-16 z-20">
+      <section className="relative py-24 md:py-80 px-6 sm:px-8 lg:px-16 z-20">
          <div className="max-w-7xl mx-auto space-y-32">
             <div className="text-center space-y-12">
               <span className="text-prestige">02 // The Synthesis</span>
@@ -267,7 +299,7 @@ export default function LandingPage() {
       </section>
 
       {/* 04: The Engine (Features) */}
-      <section className="relative py-80 px-8 lg:px-16 z-20 overflow-hidden bg-white/[0.01]">
+      <section className="relative py-24 md:py-80 px-6 sm:px-8 lg:px-16 z-20 overflow-hidden bg-white/[0.01]">
         <div className="max-w-7xl mx-auto space-y-32">
            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12">
               <div className="space-y-8">
@@ -314,7 +346,7 @@ export default function LandingPage() {
       </section>
 
       {/* 05: The Standard (Differentiation) */}
-      <section className="relative py-80 px-8 lg:px-16 z-20">
+      <section className="relative py-24 md:py-80 px-6 sm:px-8 lg:px-16 z-20">
          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32 items-center">
             <div className="order-2 lg:order-1 relative group">
                <div className="absolute inset-0 bg-primary/5 rounded-sm blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -366,7 +398,7 @@ export default function LandingPage() {
       </section>
 
       {/* 06: Access (CTA) */}
-      <section className="relative py-80 px-8 lg:px-16 z-30 overflow-hidden">
+      <section className="relative py-24 md:py-80 px-6 sm:px-8 lg:px-16 z-30 overflow-hidden">
         <div className="max-w-5xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.99 }}
@@ -406,7 +438,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer Refined */}
-      <footer className="relative pt-32 pb-64 px-12 border-t border-white/[0.03] z-10 bg-background/40 backdrop-blur-3xl">
+      <footer className="relative pt-16 md:pt-32 pb-32 md:pb-64 px-6 sm:px-12 border-t border-white/[0.03] z-10 bg-background/40 backdrop-blur-3xl">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-24">
           <div className="flex items-center gap-8 opacity-30 grayscale group cursor-default">
             <div className="w-12 h-12 border-l border-t border-primary/10 group-hover:border-primary/40 transition-all duration-1000 flex items-center justify-center glass">

@@ -19,6 +19,7 @@ import { AntiGravityCard } from "@/components/motion/anti-gravity-card";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { ArticleSkeleton, ConsoleSkeleton, SignalsSkeleton } from "@/components/ui/bento-skeleton";
 
 function debounce<T extends (...args: any[]) => void>(func: T, wait: number) {
   let timeout: ReturnType<typeof setTimeout>;
@@ -76,15 +77,15 @@ export default function Home() {
   const { data: intelligence, isLoading: intelligenceLoading } = useQuery<IntelligenceData>({
     queryKey: ["intelligence"],
     queryFn: () => apiFetch<IntelligenceData>("/intelligence"),
-    staleTime: 25 * 60 * 1000,
-    retry: 1,
+    staleTime: 60 * 60 * 1000, // 1 hour stale time to prevent dev loop
+    retry: false, // Disable retries in dev to protect quota
   });
 
   const { data: trendingData, isLoading: trendingLoading } = useQuery<TrendingData>({
     queryKey: ["trending"],
     queryFn: () => apiFetch<TrendingData>("/trending"),
-    staleTime: 15 * 60 * 1000,
-    retry: 1,
+    staleTime: 60 * 60 * 1000,
+    retry: false,
   });
 
   const categories = ["All", ...(categoriesData?.categories || [])];
@@ -100,21 +101,22 @@ export default function Home() {
       </div>
 
       {/* Institutional Status Bar - Bloomberg/Palantir Benchmark */}
-      <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/[0.08] text-xs py-5 px-8 overflow-hidden shadow-2xl">
-        <div className="max-w-[1800px] mx-auto flex items-center gap-16 font-bold uppercase tracking-[0.4em]">
-          <div className="flex items-center gap-4 text-foreground border-r border-white/20 pr-12 min-w-max">
+      <div className="sticky top-20 md:top-28 z-40 bg-background/80 backdrop-blur-xl border-b border-white/[0.08] text-[10px] py-3 md:py-5 px-4 md:px-8 overflow-hidden shadow-2xl">
+        <div className="max-w-[1800px] mx-auto flex items-center justify-between md:justify-start md:gap-16 font-bold uppercase tracking-[0.2em] md:tracking-[0.4em]">
+          <div className="flex items-center gap-4 text-foreground md:border-r md:border-white/20 md:pr-12 min-w-max">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-            <span>OPERATIONAL // {today}</span>
+            <span className="hidden sm:inline">OPERATIONAL // {today}</span>
+            <span className="sm:hidden">SYSTEM_LIVE</span>
           </div>
           
-          <div className="flex-1 overflow-hidden relative">
+          <div className="flex-1 overflow-hidden relative mx-4 md:mx-0">
             <motion.div 
                animate={{ x: [0, -2000] }}
                transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-               className="flex items-center gap-24 whitespace-nowrap text-primary/40"
+               className="flex items-center gap-12 md:gap-24 whitespace-nowrap text-primary/40"
             >
                {[1,2].map((_, i) => (
-                 <div key={i} className="flex items-center gap-24">
+                 <div key={i} className="flex items-center gap-12 md:gap-24">
                     <span className="flex items-center gap-4"><Activity className="w-3.5 h-3.5" /> FEED: SYNTHESIZING_VECTORS_8.4</span>
                     <span className="flex items-center gap-4"><Target className="w-3.5 h-3.5" /> SIGNAL: VOLATILITY_CORRELATION_CONFIRMED</span>
                     <span className="flex items-center gap-4"><ShieldCheck className="w-3.5 h-3.5" /> PARITY: institutional_integrity_verified_rsa4096</span>
@@ -123,8 +125,8 @@ export default function Home() {
                ))}
             </motion.div>
           </div>
-
-          <div className="flex items-center gap-12 text-primary/20 min-w-max border-l border-white/10 pl-12 font-mono">
+ 
+          <div className="hidden lg:flex items-center gap-12 text-primary/20 min-w-max border-l border-white/10 pl-12 font-mono">
             <span>LATENCY: 14MS</span>
             <span>NODES: 1,482</span>
             <span>UPTIME: 99.998%</span>
@@ -136,13 +138,13 @@ export default function Home() {
         
         {/* Top Header & Search Control Bento */}
         <div className="bento-grid">
-          <header className="col-span-12 lg:col-span-8 bento-cell neuro-beam p-12">
+          <header className="col-span-12 lg:col-span-8 bento-cell neuro-beam p-6 sm:p-12">
             <div className="neuro-beam-inner">
               <div className="flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40 mb-8">
                 <Brain className="w-3.5 h-3.5" /> Neural_Index_Active
               </div>
               <h1 className={cn(
-                "text-5xl md:text-8xl font-bold tracking-tighter text-foreground leading-[0.9] mb-8",
+                "text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-foreground leading-[0.9] mb-8",
                 mounted && theme !== "dark" && "font-serif"
               )}>
                 Intelligence <span className="italic font-light opacity-30">Archive</span>
@@ -190,10 +192,7 @@ export default function Home() {
           {/* Featured Article */}
           <div className="col-span-12 lg:col-span-8">
             {isLoading ? (
-              <div className="h-[600px] bento-cell flex flex-col items-center justify-center gap-6">
-                <div className="w-12 h-12 border-l border-t border-primary/40 animate-spin" />
-                <p className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Accessing Article Matrix...</p>
-              </div>
+               <ArticleSkeleton isFeatured={true} />
             ) : featuredArticle ? (
               <ArticleCard 
                 article={featuredArticle} 
@@ -221,9 +220,7 @@ export default function Home() {
                 </div>
 
                 {intelligenceLoading ? (
-                  <div className="py-24 text-center">
-                    <div className="w-8 h-8 border-b border-primary/40 animate-spin mx-auto mb-6" />
-                  </div>
+                  <ConsoleSkeleton />
                 ) : intelligence ? (
                   <div className="space-y-10 flex-1 flex flex-col">
                     <div className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/30">Primary_Vector</div>
@@ -243,10 +240,8 @@ export default function Home() {
                         <span className="text-3xl font-mono font-bold text-foreground">{intelligence.confidence}%</span>
                       </div>
                       <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${intelligence.confidence}%` }}
-                          transition={{ duration: 2.5, ease: "easeOut" }}
+                        <div
+                          style={{ width: `${intelligence.confidence}%` }}
                           className="h-full bg-primary shadow-[0_0_20px_hsla(var(--primary),0.5)]"
                         />
                       </div>
@@ -261,9 +256,9 @@ export default function Home() {
         {/* Secondary Feed Bento Grid */}
         <div className="bento-grid">
           {/* Main Index Grid */}
-          <div className="col-span-12 lg:col-span-8 flex flex-col gap-12">
+          <div className="col-span-12 lg:col-span-8 flex flex-col gap-8 md:gap-12">
             {!isLoading && gridArticles.length > 0 && (
-              <div className="grid grid-cols-2 gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
                 {gridArticles.map((article, i) => (
                   <div key={article.id} className={cn("col-span-2", i % 3 === 2 ? "md:col-span-2" : "md:col-span-1")}>
                     <ArticleCard 
@@ -291,9 +286,7 @@ export default function Home() {
                   <Brain className="w-3.5 h-3.5" /> High_Intensity_Signals
                 </h3>
                 {trendingLoading ? (
-                  <div className="space-y-6">
-                    {[1,2,3,4].map(i => <div key={i} className="h-12 bg-white/5 animate-pulse rounded-sm" />)}
-                  </div>
+                  <SignalsSkeleton />
                 ) : trendingData?.topics?.length ? (
                   <ul className="space-y-8">
                     {trendingData.topics?.slice(0, 5).map((topic: any, i: number) => (
