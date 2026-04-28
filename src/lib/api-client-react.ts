@@ -81,7 +81,15 @@ export function useGenerateAudio(options?: { mutation?: any }) {
     ...options?.mutation
   }); 
 }
-export function useTranslateArticle(options?: { mutation?: any }) { return { mutate: (args: { id: string | number, data: { targetLanguage: string } }) => {}, isPending: false }; }
+export function useTranslateArticle(options?: { mutation?: any }) { 
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string | number, data: { targetLanguage: string } }) => {
+      const { translateArticle } = await import("./ai");
+      return translateArticle(id.toString(), data.targetLanguage);
+    },
+    ...options?.mutation
+  }); 
+}
 
 export function useGenerateSummary(options?: { mutation?: any }) { 
   return useMutation({

@@ -264,6 +264,17 @@ export async function translateArticle(
 
   const a = snap.data();
 
+  // 1. Check for Cached Translation
+  if (a.translations && a.translations[targetLanguage]) {
+    console.log(`Returning cached translation for ${targetLanguage}`);
+    return {
+      translatedTitle: a.translations[targetLanguage].translatedTitle,
+      translatedContent: a.translations[targetLanguage].translatedContent,
+      language: targetLanguage,
+    };
+  }
+
+  // 2. Call AI if no cache exists
   const prompt = `Translate the given article to ${targetLanguage}. Return JSON:
 {"translatedTitle": "...", "translatedContent": "...", "language": "${targetLanguage}"}
 
@@ -275,9 +286,18 @@ Content: ${a.content || a.description}`;
   const cleanText = responseText.replace(/```json\n?/, "").replace(/\n?```/, "").trim();
   const result = JSON.parse(cleanText);
 
-  return {
+  const translationData = {
     translatedTitle: result.translatedTitle as string,
     translatedContent: result.translatedContent as string,
+  };
+
+  // 3. Save to Firebase Cache
+  await updateDoc(articleRef, {
+    [`translations.${targetLanguage}`]: translationData
+  });
+
+  return {
+    ...translationData,
     language: targetLanguage,
   };
 }

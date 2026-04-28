@@ -170,7 +170,7 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    400px circle at var(--mouse-x) var(--mouse-y),
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
     hsla(var(--primary), 0.08),
     transparent 40%
   );
@@ -216,6 +216,13 @@
 .bento-cell {
   @apply bg-card/40 backdrop-blur-2xl border-white/10 border shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] rounded-[var(--bento-radius)] relative overflow-hidden;
   box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.5),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.bento-cell:hover {
+  box-shadow: 
+    0 0 40px -10px hsla(var(--primary), 0.15),
     0 10px 40px -10px rgba(0, 0, 0, 0.5),
     inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
 }
@@ -266,6 +273,7 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  will-change: transform, filter;
   background: 
     radial-gradient(at 10% 10%, hsla(var(--primary), 0.1) 0px, transparent 50%),
     radial-gradient(at 90% 10%, hsla(var(--primary), 0.05) 0px, transparent 50%),

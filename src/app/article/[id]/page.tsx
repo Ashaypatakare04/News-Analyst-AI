@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -65,6 +65,9 @@ export default function ArticlePage() {
   const [targetLang, setTargetLang] = useState("es");
   const [showTranslate, setShowTranslate] = useState(false);
 
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 1000], ["0%", "15%"]);
+
   const { data: article, isLoading } = useGetArticle(articleId, {
     query: { enabled: !!articleId, queryKey: getGetArticleQueryKey(articleId) }
   });
@@ -86,12 +89,19 @@ export default function ArticlePage() {
       localStorage.setItem("news_history", JSON.stringify(historyArr.slice(0, 10)));
     }
 
+    let rafId: number;
     const handleMouseMove = (e: MouseEvent) => {
-      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
-      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+      });
     };
     window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [article, articleId]);
 
   const onSuccess = (message: string) => {
@@ -133,17 +143,20 @@ export default function ArticlePage() {
   if (isLoading) {
     return (
       <Layout>
-        <div className="flex h-[80vh] flex-col items-center justify-center gap-8">
-          <div className="w-16 h-16 border-l border-t border-primary/40 animate-spin" />
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/60 animate-pulse">Accessing_Neural_Record</span>
-            <div className="h-[1px] w-32 bg-white/10 overflow-hidden">
-               <motion.div 
-                animate={{ x: ["-100%", "100%"] }} 
-                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                className="h-full w-1/2 bg-primary/60" 
-               />
-            </div>
+        <div className="flex h-[80vh] flex-col items-center justify-center gap-12 w-full max-w-4xl mx-auto px-6">
+          <div className="w-full space-y-6">
+            <div className="h-16 w-3/4 skeleton-gemini rounded-[0rem] mx-auto opacity-80" />
+            <div className="h-4 w-1/2 skeleton-gemini rounded-[0rem] mx-auto opacity-40" />
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 w-full mt-12">
+            {[1, 2, 3].map(i => (
+               <div key={i} className="h-48 skeleton-gemini rounded-[0rem] opacity-50" />
+            ))}
+          </div>
+
+          <div className="flex flex-col items-center gap-4 mt-8">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/60 animate-pulse">Synthesizing_Neural_Record</span>
           </div>
         </div>
       </Layout>
@@ -177,8 +190,10 @@ export default function ArticlePage() {
       <div className="min-h-screen bg-background relative selection:bg-primary/20 md:cursor-none">
         
         {/* Background Decor */}
-        <div className="fixed inset-0 z-0 pointer-events-none opacity-20">
-          <div className="mesh-bg" />
+        <div className="fixed inset-0 z-0 pointer-events-none opacity-20 overflow-hidden">
+          <motion.div style={{ y: backgroundY }} className="absolute inset-[-20%]">
+             <div className="mesh-bg w-full h-full" />
+          </motion.div>
           <div className="bg-noise absolute inset-0" />
         </div>
 
@@ -452,13 +467,13 @@ export default function ArticlePage() {
                 )}
 
                 {activeTab === "article" && (
-                  <motion.div key="article" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="py-12">
-                    <div className="prose prose-invert prose-2xl max-w-none text-foreground/50 leading-[1.8] font-serif columns-1 md:columns-2 gap-20 font-light">
+                  <motion.div key="article" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }} className="py-12 flex flex-col items-center">
+                    <div className="prose prose-invert prose-2xl max-w-[70ch] text-foreground/80 leading-relaxed font-serif font-light w-full">
                       {article.content.split("\n").map((paragraph: string, i: number) => (
                         paragraph.trim() && <p key={i} className="mb-12 first-letter:text-6xl first-letter:font-bold first-letter:mr-3 first-letter:text-primary/70">{paragraph}</p>
                       ))}
                     </div>
-                    <div className="mt-32 pt-16 border-t border-white/5">
+                    <div className="mt-32 pt-16 border-t border-white/5 w-full max-w-[70ch]">
                       <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40 hover:text-primary transition-all flex items-center gap-4">
                         <Globe className="w-4 h-4" /> Audit_Primary_Data_Source_Node
                       </a>
