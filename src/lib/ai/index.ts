@@ -2,7 +2,7 @@
 import { geminiModel, geminiVisionModel } from "../gemini";
 import { openai } from "../openai";
 import { db } from "../firebase";
-import { doc, getDoc, getDocs, updateDoc, collection, query, orderBy, limit } from "firebase/firestore";
+import { doc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, orderBy, limit } from "firebase/firestore";
 
 /**
  * Deterministic mock response generator for institutional-grade fallback.
@@ -550,4 +550,21 @@ Generate the daily intelligence brief.`;
     strategicInsight: result.strategicInsight as string,
     generatedAt: new Date().toISOString(),
   };
+}
+
+export async function clearIntelligenceCache(adminUid: string) {
+  const adminDoc = await getDoc(doc(db, "admins", adminUid));
+  if (!adminDoc.exists()) throw new Error("Unauthorized: Admin access required.");
+  
+  intelligenceCache = null;
+  trendingCache = null;
+  return { success: true, message: "Global Intelligence Cache Purged Successfully" };
+}
+
+export async function adminDeleteArticle(adminUid: string, articleId: string) {
+  const adminDoc = await getDoc(doc(db, "admins", adminUid));
+  if (!adminDoc.exists()) throw new Error("Unauthorized: Admin access required.");
+  
+  await deleteDoc(doc(db, "articles", articleId));
+  return { success: true, message: `Article ${articleId} purged from neural record.` };
 }

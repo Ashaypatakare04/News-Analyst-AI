@@ -154,3 +154,24 @@ export interface Article {
 export interface ChatMessage { role: "user" | "assistant"; content: string; }
 export interface ArticleReference { id: string; title: string; source: string; url: string; }
 export interface UploadResponse { summary: string; bulletPoints: string[]; extractedText: string; insights?: string; }
+
+// Admin Hooks
+export function useClearIntelligenceCache(options?: { mutation?: any }) {
+  return useMutation({
+    mutationFn: async ({ adminUid }: { adminUid: string }) => {
+      const { clearIntelligenceCache } = await import("./ai");
+      return clearIntelligenceCache(adminUid);
+    },
+    ...options?.mutation
+  });
+}
+
+export function useAdminDeleteArticle(options?: { mutation?: any }) {
+  return useMutation({
+    mutationFn: async ({ adminUid, articleId }: { adminUid: string, articleId: string }) => {
+      const { adminDeleteArticle } = await import("./ai");
+      return adminDeleteArticle(adminUid, articleId);
+    },
+    ...options?.mutation
+  });
+}

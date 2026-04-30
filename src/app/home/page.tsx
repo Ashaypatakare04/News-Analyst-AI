@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/layout";
 import { ArticleCard, getCategoryColor } from "@/components/article-card";
 import { useGetNews, useGetCategories } from "@/lib/api-client-react";
+import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
 import { apiFetch, type IntelligenceData, type TrendingData } from "@/lib/api";
 import {
@@ -56,6 +57,7 @@ const itemVars = {
 
 export default function Home() {
   const { theme } = useTheme();
+  const { isAdmin } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -335,6 +337,15 @@ export default function Home() {
                     </div>
                     <ArrowRight className="w-4 h-4 text-primary/40 group-hover:translate-x-2 transition-transform" />
                   </Link>
+                  {isAdmin && (
+                    <Link href="/admin" className="group flex items-center justify-between p-6 glass border-red-500/20 hover:border-red-500/50 transition-all bg-red-500/5">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-bold uppercase tracking-widest group-hover:text-red-500 transition-colors text-red-500/80">Directorate_Override</span>
+                        <span className="text-[9px] text-red-500/40 font-light">Admin Access Terminal</span>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-red-500/40 group-hover:translate-x-2 transition-transform" />
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
