@@ -51,7 +51,7 @@ export default function BriefPage() {
             <div className="flex items-center gap-6 sm:gap-10">
               <span className="flex items-center gap-3">
                 <Target className="w-3.5 h-3.5 opacity-40" />
-                <span className="hidden sm:inline">Strategic Synthesis Active</span>
+                <span className="hidden sm:inline">Daily Summary Active</span>
                 <span className="sm:hidden">SYNC_ACTIVE</span>
               </span>
               <span className="flex items-center gap-3">
@@ -86,7 +86,7 @@ export default function BriefPage() {
                   The <span className="italic font-light opacity-30">Executive</span> Brief
                 </h1>
                 <p className="text-muted-foreground/50 text-xl font-light max-w-xl leading-relaxed">
-                  A high-fidelity condensation of global indices, produced via autonomous neural synthesis for strategic decision support.
+                  A high-level summary of global news, produced by AI for strategic decision making.
                 </p>
               </div>
               <MagneticButton
@@ -113,10 +113,10 @@ export default function BriefPage() {
               >
                 <Globe className="w-16 h-16 text-primary/10 mx-auto mb-10" />
                 <h2 className="font-serif text-3xl font-bold mb-6">Briefing Unavailable</h2>
-                <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-muted-foreground/20 mb-16">Syncing failure across primary data nodes. Check connection.</p>
+                <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-muted-foreground/20 mb-16">Failed to load news summary. Please check your connection.</p>
                 <Link href="/home">
                   <MagneticButton className="px-16 py-6 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-[0.5em]">
-                    Return to Global Index
+                    Return to News Feed
                   </MagneticButton>
                 </Link>
               </motion.div>
@@ -133,7 +133,7 @@ export default function BriefPage() {
                   <section className="relative p-16 md:p-24 glass border-primary/20 overflow-hidden group shadow-2xl">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] pointer-events-none group-hover:bg-primary/10 transition-colors" />
                     <div className="text-[10px] font-bold uppercase tracking-[0.7em] text-primary/40 mb-12 flex items-center gap-6">
-                       <ScanLine className="w-4 h-4" /> Core Synthesis
+                       <ScanLine className="w-4 h-4" /> Key Insight
                     </div>
                     <p className={cn(
                       "text-3xl sm:text-4xl md:text-6xl font-bold text-foreground leading-[1.2] italic tracking-tight text-gradient",
@@ -185,7 +185,7 @@ export default function BriefPage() {
                       "text-4xl font-bold text-foreground flex items-center gap-8",
                       mounted && theme !== "dark" && "font-serif"
                     )}>
-                      Emerging <span className="italic font-light opacity-30">Vectors</span>
+                      Emerging <span className="italic font-light opacity-30">Trends</span>
                     </h2>
                     <div className="p-12 glass border-white/5 space-y-16 shadow-2xl">
                       {brief.emergingSignals.map((signal, i) => (
@@ -213,15 +213,15 @@ export default function BriefPage() {
                 <div className="pt-32 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-16">
                   <div className="flex items-center gap-6 text-[10px] font-bold text-primary/10 uppercase tracking-[0.6em]">
                     <div className="w-2 h-2 rounded-full bg-primary/10 animate-pulse" />
-                    Neural Synthetic Protocol v8.4 Active
+                    AI Summary Engine v8.4 Active
                   </div>
                   <div className="flex items-center gap-12">
                     <Link href="/home" className="text-[11px] font-bold uppercase tracking-[0.5em] text-muted-foreground/20 hover:text-primary transition-colors">
-                      Full Global Index
+                      Full News Feed
                     </Link>
                     <Link href="/ask">
                       <MagneticButton className="px-16 py-6 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-[0.5em] flex items-center gap-6">
-                        Consult Analyst <ArrowRight className="w-5 h-5" />
+                        Ask AI Assistant <ArrowRight className="w-5 h-5" />
                       </MagneticButton>
                     </Link>
                   </div>

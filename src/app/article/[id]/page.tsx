@@ -156,7 +156,7 @@ export default function ArticlePage() {
           </div>
 
           <div className="flex flex-col items-center gap-4 mt-8">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/60 animate-pulse">Synthesizing_Neural_Record</span>
+            <span className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/60 animate-pulse">Loading_Article_Data</span>
           </div>
         </div>
       </Layout>
@@ -262,7 +262,7 @@ export default function ArticlePage() {
                   className="px-6 py-3 hover:bg-white/[0.02] text-primary text-[11px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                   {sumMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Brain className="w-3.5 h-3.5" />}
-                  NEURAL_SYNTHESIS
+                  AI_SUMMARY
                 </MagneticButton>
 
                 <MagneticButton
@@ -340,7 +340,7 @@ export default function ArticlePage() {
                   <div className="w-20 h-20 border-l border-t border-primary/20 flex items-center justify-center text-primary mb-2 shadow-inner glass-premium">
                     <Play className="w-10 h-10 ml-2 fill-current opacity-70 group-hover:scale-110 transition-transform" />
                   </div>
-                  <div className="text-[10px] font-mono font-bold text-primary/60 uppercase tracking-[0.6em]">Aural_Synthesis_Protocol_Active</div>
+                  <div className="text-[10px] font-mono font-bold text-primary/60 uppercase tracking-[0.6em]">Audio_Player_Active</div>
                   <audio controls src={article.audioUrl} className="w-full h-10 opacity-30 mt-6 grayscale invert brightness-200 contrast-125 dark:invert-0 dark:brightness-100" />
                 </div>
               </motion.div>
@@ -422,13 +422,13 @@ export default function ArticlePage() {
                       <div className="text-center py-40 bento-cell neuro-beam flex flex-col items-center">
                         <div className="neuro-beam-inner flex flex-col items-center w-full py-20">
                           <ScanLine className="w-16 h-16 text-primary/10 mb-10 animate-pulse" />
-                          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-muted-foreground/40 mb-16">Neural_Synthesis_Pipeline_Inactive</p>
+                          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-muted-foreground/40 mb-16">AI_Summary_Not_Generated</p>
                           <MagneticButton
                             onClick={() => sumMut.mutate({ id: articleId })}
                             disabled={sumMut.isPending}
                             className="px-16 py-6 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-[0.5em]"
                           >
-                            {sumMut.isPending ? "Executing Analysis..." : "Initialize Synthesis"}
+                            {sumMut.isPending ? "Executing Analysis..." : "Generate AI Summary"}
                           </MagneticButton>
                         </div>
                       </div>
@@ -502,7 +502,7 @@ export default function ArticlePage() {
                              <div className="absolute top-0 right-0 p-8">
                                <Fingerprint className="w-20 h-20 text-primary/5 transition-all group-hover:text-primary/10 group-hover:scale-110" />
                              </div>
-                             <div className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30 mb-10">Neural_Claim_Validation</div>
+                             <div className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30 mb-10">AI_Fact_Check</div>
                              <p className={cn(
                                "text-3xl md:text-4xl leading-[1.3] text-foreground/80 font-light italic",
                                theme !== "dark" && "font-serif"

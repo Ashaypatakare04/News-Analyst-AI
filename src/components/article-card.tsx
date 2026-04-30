@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { format } from "date-fns";
 import { Brain } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -34,11 +35,13 @@ export function ArticleCard({ article, index = 0, speed }: { article: Article; i
     <AntiGravityCard speed={speed} className="w-full h-full neuro-beam rounded-sm overflow-hidden">
       <div className="neuro-beam-inner p-8 group flex flex-col gap-8 h-full">
         {/* Image Area */}
-        <Link href={`/article/${article.id}`} className="block relative aspect-[16/9] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-prestige">
-          <img 
+        <Link href={`/article/${article.id}`} className="block relative aspect-[16/9] w-full h-full overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000 shadow-prestige">
+          <Image 
             src={imageUrl} 
             alt={article.title}
-            className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-[2000ms] group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-20 transition-opacity" />
           <div className="absolute top-6 left-6">
@@ -79,7 +82,7 @@ export function ArticleCard({ article, index = 0, speed }: { article: Article; i
           {article.aiSummary && (
             <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4 bg-white/[0.01] -mx-8 -mb-8 p-8 border-t border-white/5 group-hover:bg-primary/[0.02] transition-colors">
               <div className="text-primary/40 text-[9px] font-mono font-bold uppercase tracking-[0.5em] flex items-center gap-3">
-                <Brain className="w-3 h-3" /> Synthesis_Output
+                <Brain className="w-3 h-3" /> AI Summary
               </div>
               <p className="text-[12px] text-foreground/50 leading-relaxed font-light italic">
                 "{article.aiSummary}"

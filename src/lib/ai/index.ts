@@ -306,77 +306,8 @@ export async function askWithRAG(
   question: string,
   conversationHistory: { role: string; content: string }[] = []
 ) {
-  const q = query(collection(db, "articles"), orderBy("createdAt", "desc"), limit(40));
-  const snaps = await getDocs(q);
-  const allArticles = snaps.docs.map(doc => ({ id: doc.id, ...doc.data() as any }));
-
-  const keywords = question.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-  const scored = allArticles.map(a => {
-    const text = `${a.title} ${a.description} ${a.aiSummary ?? ""}`.toLowerCase();
-    const score = keywords.reduce((s, kw) => s + (text.includes(kw) ? 1 : 0), 0);
-    return { ...a, _score: score };
-  });
-  scored.sort((a, b) => b._score - a._score);
-  const topArticles = scored.slice(0, 10);
-
-  const articleContext = topArticles
-    .map(
-      (a) =>
-        `[Article ${a.id}] "${a.title}" | Source: ${a.source} | Category: ${a.category} | Trust: ${a.trustScore ?? "unverified"}\nSummary: ${a.aiSummary || a.description}`
-    )
-    .join("\n\n");
-
-  const historyText = conversationHistory
-    .map((m) => `${m.role.toUpperCase()}: ${m.content}`)
-    .join("\n");
-
-  const prompt = `You are Agentic Intel Oracle — an expert intelligence analyst. 
-Your goal is to synthesize human-level intelligence from the provided sources.
-
-Available articles for context:
-${articleContext}
-
-Conversation History:
-${historyText}
-
-Question: ${question}
-
-INSTRUCTIONS:
-1. INTERNAL MONOLOGUE: First, analyze the question. Identify key entities and what information is missing.
-2. CRITIQUE: Evaluate the provided articles. Do they actually answer the question? Are there contradictions?
-3. SYNTHESIS: Write a deep, high-fidelity response. Use a professional, institutional tone (Quiet Luxury). Cite articles as [Article ID].
-4. SELF-REFINE: Before finishing, check if you missed any critical data from the sources.
-
-Return JSON:
-{
-  "reasoning": "Your internal analytical process and self-critique",
-  "answer": "The final synthesized intelligence report",
-  "sourceIds": ["ID1", "ID2"],
-  "confidence": <integer 0-100>,
-  "followUpQuestions": ["insightful question 1", "2"]
-}`;
-
-  const responseText = await callAIResiliently(prompt);
-  const cleanText = responseText.replace(/```json\n?/, "").replace(/\n?```/, "").trim();
-  const result = JSON.parse(cleanText);
-  const sourceIds: string[] = result.sourceIds || [];
-
-  const sources = allArticles
-    .filter((a) => sourceIds.includes(a.id))
-    .map((a) => ({
-      id: a.id,
-      title: a.title,
-      source: a.source,
-      url: a.url,
-    }));
-
-  return {
-    answer: result.answer as string,
-    sources,
-    confidence: result.confidence as number,
-    reasoning: result.reasoning as string,
-    followUpQuestions: result.followUpQuestions as string[],
-  };
+  const { askWithVectorRAG } = await import("@/services/ai.service");
+  return askWithVectorRAG(question, conversationHistory);
 }
 
 export async function analyzeUploadedArticle(imageBase64: string, mimeType: string) {

@@ -65,11 +65,11 @@ export default function UploadPage() {
           <div className="flex items-center gap-12 max-w-7xl mx-auto w-fit md:w-full font-bold uppercase tracking-[0.4em] text-primary/40">
             <span className="flex items-center gap-3">
               <ScanLine className="w-3.5 h-3.5 opacity-40 animate-pulse-live" />
-              <span className="hidden sm:inline">Vision Synthesis Pipeline: ACTIVE</span>
-              <span className="sm:hidden">VISION_ACTIVE</span>
+              <span className="hidden sm:inline">Image Analysis: ACTIVE</span>
+              <span className="sm:hidden">ANALYSIS_ACTIVE</span>
             </span>
             <span className="flex items-center gap-3 opacity-20 hidden md:inline">
-              OCR Engine: Institutional Grade v8
+              OCR Engine: Document Scanner v8
             </span>
             <div className="flex items-center gap-3 ml-auto">
                <Activity className="w-3 h-3 text-primary animate-pulse-live" />
@@ -82,16 +82,16 @@ export default function UploadPage() {
           <header className="mb-24">
             <div className="flex items-center gap-6 text-primary/40 text-[10px] font-bold uppercase tracking-[0.6em] mb-12">
               <div className="w-16 h-px bg-primary/20" />
-              Media Digitalization Directives
+              Image Upload
             </div>
             <h1 className={cn(
               "text-5xl sm:text-7xl md:text-8xl font-bold text-gradient leading-[0.9] tracking-tighter mb-10",
               theme !== "dark" && "font-serif"
             )}>
-              Data <span className="italic font-light opacity-30">Intake</span>
+              Document <span className="italic font-light opacity-30">Scanner</span>
             </h1>
             <p className="text-muted-foreground/50 text-xl font-light max-w-2xl leading-relaxed">
-              Consolidate physical records into the global intelligence matrix. High-fidelity neural vision engine for analogue media extraction.
+              Upload images of news articles or documents to extract text and generate an AI summary.
             </p>
           </header>
 
@@ -145,8 +145,8 @@ export default function UploadPage() {
                         <div className="w-20 h-20 border-l border-t border-primary/20 flex items-center justify-center mb-12 group-hover/dropzone:border-primary transition-colors glass">
                           <UploadIcon className="w-8 h-8 text-primary/30 group-hover:text-primary transition-colors" />
                         </div>
-                        <h3 className="text-[11px] font-bold uppercase tracking-[0.6em] text-foreground/50 mb-6">Initialize Intake Protocol</h3>
-                        <p className="text-muted-foreground/30 text-[10px] font-bold tracking-[0.4em] uppercase">Materialize physical media here</p>
+                        <h3 className="text-[11px] font-bold uppercase tracking-[0.6em] text-foreground/50 mb-6">Upload an Image</h3>
+                        <p className="text-muted-foreground/30 text-[10px] font-bold tracking-[0.4em] uppercase">Drag & drop an image here</p>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -168,9 +168,9 @@ export default function UploadPage() {
                       className="flex-1 bg-primary text-primary-foreground py-6 text-[11px] font-bold uppercase tracking-[0.5em] flex items-center justify-center gap-6"
                     >
                       {isPending ? (
-                        <><Loader2 className="w-5 h-5 animate-spin" /> Analyzing Bitstream</>
+                        <><Loader2 className="w-5 h-5 animate-spin" /> Analyzing Image</>
                       ) : (
-                        <>Incorporate Analogue Data <ArrowRight className="w-5 h-5" /></>
+                        <>Analyze Document <ArrowRight className="w-5 h-5" /></>
                       )}
                     </MagneticButton>
                     <MagneticButton
@@ -200,7 +200,7 @@ export default function UploadPage() {
                       <div className="p-12 glass border-primary/20 bg-primary/[0.02] shadow-2xl group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-3xl pointer-events-none group-hover:bg-primary/10 transition-colors" />
                         <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/40 mb-10 flex items-center gap-6">
-                          <Brain className="w-5 h-5" /> Neural Synthesis Summary
+                          <Brain className="w-5 h-5" /> AI Summary
                         </div>
                         <p className={cn(
                           "text-2xl sm:text-3xl font-bold text-foreground leading-[1.3] italic tracking-tight text-gradient",
@@ -213,7 +213,7 @@ export default function UploadPage() {
 
                     <div className="p-12 glass border-white/5 shadow-2xl space-y-16">
                       <h3 className="text-[11px] font-bold uppercase tracking-[0.6em] mb-12 text-primary/40 flex items-center gap-6">
-                        <Target className="w-5 h-5" /> Extracted Strategic Nodes
+                        <Target className="w-5 h-5" /> Key Points
                       </h3>
                       <ul className="space-y-12">
                         {result.bulletPoints.map((point, i) => (
@@ -238,7 +238,7 @@ export default function UploadPage() {
 
                     <div className="p-12 glass border-white/5 bg-black/20 shadow-inner group/transcript">
                       <h3 className="text-[10px] font-bold uppercase tracking-[0.6em] mb-10 text-foreground/20 flex items-center gap-6 group-hover/transcript:text-primary/40 transition-colors">
-                        <FileText className="w-5 h-5" /> Raw Digital Imprint
+                        <FileText className="w-5 h-5" /> Extracted Text
                       </h3>
                       <div className="text-xs font-mono leading-relaxed text-muted-foreground/30 h-64 overflow-y-auto hide-scrollbar whitespace-pre-wrap font-light tracking-widest italic border-l border-white/5 pl-8">
                         {result.extractedText}
@@ -252,9 +252,9 @@ export default function UploadPage() {
                     className="h-full min-h-[600px] flex flex-col items-center justify-center text-center p-24 glass border-dashed border-white/5 opacity-20 grayscale"
                   >
                     <Fingerprint className="w-20 h-20 mb-12 text-primary/20 animate-pulse" />
-                    <h3 className="text-[12px] font-bold uppercase tracking-[0.7em] mb-6">Awaiting Signal Synchronization</h3>
+                    <h3 className="text-[12px] font-bold uppercase tracking-[0.7em] mb-6">Awaiting Document Upload</h3>
                     <p className="text-muted-foreground text-base font-light leading-relaxed max-w-sm tracking-tight italic">
-                      The extraction matrix is currently idle. Initialize a media digitalization scan to populate this terminal.
+                      Upload an image to extract text and generate a summary.
                     </p>
                   </motion.div>
                 )}

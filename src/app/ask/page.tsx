@@ -22,16 +22,15 @@ export default function AskPage() {
   const [messages, setMessages] = useState<UIMessage[]>([
     { 
       role: "assistant", 
-      content: "Agentic Intel Analyst at your service. I have synthesized data from global news streams and historical archives. How may I assist your inquiry today?" 
+      content: "AI Assistant at your service. I have analyzed global news. How may I help you today?" 
     }
   ]);
   const [synthesisStep, setSynthesisStep] = useState(0);
   
-  const synthesisPhases = [
-    "SCANNING_GLOBAL_INDICES...",
-    "EXTRACTING_SEMANTIC_VECTORS...",
-    "ESTABLISHING_TRUTH_ONTOLOGY...",
-    "SYNTHESIZING_AGENTIC_RESPONSE..."
+    "SEARCHING_NEWS...",
+    "ANALYZING_ARTICLES...",
+    "VERIFYING_FACTS...",
+    "GENERATING_ANSWER..."
   ];
 
   const { mutate: askQuestion, isPending } = useAskQuestion({
@@ -103,14 +102,14 @@ export default function AskPage() {
           <div className="flex items-center gap-6 text-primary/40 text-[10px] font-mono font-bold uppercase tracking-[0.4em] sm:tracking-[0.6em] mb-4 sm:mb-8">
             <div className="hidden sm:block w-12 h-px bg-primary/20" />
             <Activity className="w-4 h-4 animate-pulse-live" />
-            Probe_Protocol_Active
+            AI_Assistant_Active
             <div className="hidden sm:block w-12 h-px bg-primary/20" />
           </div>
           <h1 className={cn(
             "text-4xl sm:text-5xl md:text-7xl font-bold text-gradient tracking-tighter",
             theme !== "dark" && "font-serif"
           )}>
-            Inquiry <span className="italic font-light opacity-50">Terminal</span>
+            Ask <span className="italic font-light opacity-50">AI</span>
           </h1>
         </header>
 
@@ -153,16 +152,14 @@ export default function AskPage() {
                           <div className="space-y-6">
                              {msg.reasoning && (
                                <div className="mb-10 p-8 bg-black/40 border-l border-primary/30 rounded-sm shadow-inner">
-                                 <div className="flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40 mb-6">
-                                   <Brain className="w-3.5 h-3.5" /> Internal_Synthesis_Logic
+                                   <Brain className="w-3.5 h-3.5" /> AI_Reasoning
                                  </div>
                                  <div className="text-[12px] font-mono italic text-foreground/40 leading-relaxed">
                                    {msg.reasoning}
                                  </div>
                                </div>
                              )}
-                             <div className="flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.5em] text-primary/30 mb-10">
-                                <Terminal className="w-3.5 h-3.5" /> Synthesis_Output
+                                 <Terminal className="w-3.5 h-3.5" /> AI_Answer
                              </div>
                              <div className="text-foreground/90 font-light text-base md:text-lg">
                                 <ReactMarkdown>{msg.content}</ReactMarkdown>
@@ -223,7 +220,7 @@ export default function AskPage() {
           <div className="max-w-5xl mx-auto">
             <div className="relative mb-8 flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30">
               <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              INTELLIGENCE_INTERFACE_STANDBY
+              AI_ASSISTANT_READY
             </div>
             <form onSubmit={handleSubmit} className="relative flex items-center group bg-white/[0.01] border border-white/10 p-6 focus-within:border-primary/40 focus-within:bg-white/[0.03] transition-all duration-700 shadow-prestige overflow-hidden">
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-focus-within:scale-x-100 transition-transform duration-1000" />
@@ -231,7 +228,7 @@ export default function AskPage() {
                 type="text"
                 value={input}
                 onChange={e => setInput(e.target.value)}
-                placeholder="QUERY_NEURAL..."
+                placeholder="ASK_AI_ASSISTANT..."
                 disabled={isPending}
                 className="w-full bg-transparent border-none py-4 sm:py-6 pr-20 sm:pr-32 text-lg sm:text-2xl font-light tracking-tight focus:outline-none transition-all placeholder:text-muted-foreground/10 placeholder:uppercase placeholder:font-mono placeholder:font-bold placeholder:text-[11px] placeholder:tracking-[0.6em]"
               />
@@ -241,7 +238,7 @@ export default function AskPage() {
                 className="absolute right-6 top-1/2 -translate-y-1/2 text-primary hover:text-white transition-all disabled:opacity-5 group"
               >
                 <div className="flex items-center gap-6">
-                   <span className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] hidden md:block opacity-0 group-hover:opacity-40 transition-opacity whitespace-nowrap">EXECUTE_COMMAND</span>
+                   <span className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] hidden md:block opacity-0 group-hover:opacity-40 transition-opacity whitespace-nowrap">SEND_MESSAGE</span>
                    <div className="w-14 h-14 flex items-center justify-center border border-primary/20 rounded-full group-hover:border-primary/60 transition-all bg-primary/5">
                     <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                    </div>
@@ -250,7 +247,7 @@ export default function AskPage() {
             </form>
             <div className="mt-12 flex items-center justify-between opacity-20">
                <div className="text-[9px] font-mono font-bold uppercase tracking-[0.7em] flex items-center gap-4">
-                  <Activity className="w-3.5 h-3.5" /> CORE: agentic_intel_v2.1
+                  <Activity className="w-3.5 h-3.5" /> AI_ENGINE_v2.1
                </div>
                <div className="text-[9px] font-mono font-bold uppercase tracking-[0.7em]">ENCRYPTION: RSA_4096_ACTIVE</div>
             </div>

@@ -143,16 +143,16 @@ export default function Home() {
           <header className="col-span-12 lg:col-span-8 bento-cell neuro-beam p-6 sm:p-12">
             <div className="neuro-beam-inner">
               <div className="flex items-center gap-4 text-[9px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40 mb-8">
-                <Brain className="w-3.5 h-3.5" /> Neural_Index_Active
+                <Brain className="w-3.5 h-3.5" /> News_Feed_Active
               </div>
               <h1 className={cn(
                 "text-4xl sm:text-6xl md:text-8xl font-bold tracking-tighter text-foreground leading-[0.9] mb-8",
                 mounted && theme !== "dark" && "font-serif"
               )}>
-                Intelligence <span className="italic font-light opacity-30">Archive</span>
+                News <span className="italic font-light opacity-30">Feed</span>
               </h1>
               <p className="text-muted-foreground/40 text-lg font-light tracking-tight max-w-2xl leading-relaxed">
-                Synthesizing planetary signals into precision directives. Primary tactical feed active for neural synchronization.
+                Summarizing global news into actionable insights. Primary news feed active.
               </p>
             </div>
           </header>
@@ -163,7 +163,7 @@ export default function Home() {
                 <div className="relative group">
                   <input
                     type="text"
-                    placeholder="PROBE_INDEX..."
+                    placeholder="SEARCH_ARTICLES..."
                     onChange={(e) => { setSearchQuery(e.target.value); handleSearch(e.target.value); }}
                     value={searchQuery}
                     className="w-full bg-transparent border-b border-primary/20 pb-4 pr-12 text-lg font-light tracking-tight focus:outline-none focus:border-primary transition-all placeholder:text-muted-foreground/10 placeholder:uppercase placeholder:font-mono placeholder:font-bold placeholder:text-[10px] placeholder:tracking-[0.5em]"
@@ -280,7 +280,7 @@ export default function Home() {
             )}
             <div className="flex justify-center pt-8">
               <MagneticButton className="px-12 py-5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-[0.5em] hover:bg-white/[0.02]">
-                Materialize_Further_Indices
+                Load_More_Articles
               </MagneticButton>
             </div>
           </div>
@@ -291,7 +291,7 @@ export default function Home() {
             <div className="bento-cell neuro-beam p-10 flex flex-col gap-10">
               <div className="neuro-beam-inner flex flex-col gap-10">
                 <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/30 flex items-center gap-4">
-                  <Brain className="w-3.5 h-3.5" /> High_Intensity_Signals
+                  <Brain className="w-3.5 h-3.5" /> Trending_Topics
                 </h3>
                 {trendingLoading ? (
                   <SignalsSkeleton />
@@ -321,26 +321,26 @@ export default function Home() {
             {/* Quick Access Portal */}
             <div className="bento-cell neuro-beam p-10 bg-primary/[0.02]">
               <div className="neuro-beam-inner space-y-8">
-                <div className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Terminal_Access</div>
+                <div className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Quick_Links</div>
                 <div className="flex flex-col gap-4">
                   <Link href="/ask" className="group flex items-center justify-between p-6 glass border-white/5 hover:border-primary/20 transition-all">
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">Direct_Inquiry</span>
-                      <span className="text-[9px] text-muted-foreground/40 font-light">Initialize Neural Probe</span>
+                      <span className="text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">Ask_AI_Assistant</span>
+                      <span className="text-[9px] text-muted-foreground/40 font-light">Search Articles</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-primary/40 group-hover:translate-x-2 transition-transform" />
                   </Link>
                   <Link href="/brief" className="group flex items-center justify-between p-6 glass border-white/5 hover:border-primary/20 transition-all">
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">Executive_Brief</span>
-                      <span className="text-[9px] text-muted-foreground/40 font-light">Global Synthesis Recap</span>
+                      <span className="text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">Daily_Briefing</span>
+                      <span className="text-[9px] text-muted-foreground/40 font-light">AI News Summary</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-primary/40 group-hover:translate-x-2 transition-transform" />
                   </Link>
                   {isAdmin && (
                     <Link href="/admin" className="group flex items-center justify-between p-6 glass border-red-500/20 hover:border-red-500/50 transition-all bg-red-500/5">
                       <div className="flex flex-col gap-1">
-                        <span className="text-xs font-bold uppercase tracking-widest group-hover:text-red-500 transition-colors text-red-500/80">Directorate_Override</span>
+                        <span className="text-xs font-bold uppercase tracking-widest group-hover:text-red-500 transition-colors text-red-500/80">Admin_Dashboard</span>
                         <span className="text-[9px] text-red-500/40 font-light">Admin Access Terminal</span>
                       </div>
                       <ArrowRight className="w-4 h-4 text-red-500/40 group-hover:translate-x-2 transition-transform" />

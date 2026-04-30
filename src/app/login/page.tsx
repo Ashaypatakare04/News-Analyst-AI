@@ -16,10 +16,10 @@ import { AntiGravityCard } from "@/components/motion/anti-gravity-card";
 import { MagneticButton } from "@/components/motion/magnetic-button";
 
 const perks = [
-  { icon: Brain, label: "Autonomous synthesis of global events" },
-  { icon: ShieldCheck, label: "Institutional-grade verification floor" },
-  { icon: Target, label: "Strategic cross-referencing of indices" },
-  { icon: Fingerprint, label: "Real-time sentient intelligence pipeline" },
+  { icon: Brain, label: "AI summary of global events" },
+  { icon: ShieldCheck, label: "Premium verified news sources" },
+  { icon: Target, label: "Cross-referencing of articles" },
+  { icon: Fingerprint, label: "Real-time AI analysis engine" },
 ];
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -86,8 +86,7 @@ export default function LoginPage() {
             AGENTIC<span className="text-primary/40 font-sans font-light tracking-[0.4em] ml-2 text-[11px]">INTEL</span>
           </span>
         </Link>
-        <Link href="/" className="flex items-center gap-4 text-[11px] font-bold uppercase tracking-[0.5em] text-primary/40 hover:text-primary transition-all group">
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" /> Back to Terminal
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" /> Back to Home
         </Link>
       </header>
 
@@ -112,12 +111,12 @@ export default function LoginPage() {
                 theme !== "dark" && "font-serif"
               )}>
                 Access<br />
-                <span className="italic font-light opacity-30">the intelligence.</span>
+                <span className="italic font-light opacity-30">the platform.</span>
               </h2>
             </div>
             
             <p className="text-muted-foreground/60 text-xl leading-relaxed font-light max-w-lg">
-              Authorized access is mandatory for full neural synthesis synchronization. Identity mapping ensures precision directive delivery across the global index.
+              Sign in to access your personalized news feed and generate unlimited AI summaries.
             </p>
 
             <ul className="space-y-12">
@@ -153,8 +152,8 @@ export default function LoginPage() {
                   <h1 className={cn(
                     "text-4xl font-bold text-foreground mb-4 tracking-tight",
                     theme !== "dark" && "font-serif"
-                  )}>Entrance Terminal</h1>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-primary/30">Authorize Identity Chain</p>
+                  )}>Welcome Back</h1>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.5em] text-primary/30">Sign in to your account</p>
                 </div>
 
                 {/* OAuth Terminal Buttons */}
@@ -169,7 +168,7 @@ export default function LoginPage() {
                     ) : (
                       <>
                         <GoogleIcon className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity" />
-                        <span className="text-[11px] font-bold uppercase tracking-[0.5em] flex-1 text-left">Sync via Google</span>
+                        <span className="text-[11px] font-bold uppercase tracking-[0.5em] flex-1 text-left">Sign in with Google</span>
                       </>
                     )}
                   </MagneticButton>
@@ -184,7 +183,7 @@ export default function LoginPage() {
                     ) : (
                       <>
                         <GitHubIcon className="w-6 h-6 opacity-40 group-hover:opacity-100 transition-opacity text-foreground" />
-                        <span className="text-[11px] font-bold uppercase tracking-[0.5em] flex-1 text-left">Sync via GitHub</span>
+                        <span className="text-[11px] font-bold uppercase tracking-[0.5em] flex-1 text-left">Sign in with GitHub</span>
                       </>
                     )}
                   </MagneticButton>
@@ -193,7 +192,7 @@ export default function LoginPage() {
                 {/* Lexical Divider */}
                 <div className="flex items-center gap-8 my-14 opacity-10">
                   <div className="flex-1 h-px bg-primary" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.5em]">DIRECT PROBE</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.5em]">OR EMAIL</span>
                   <div className="flex-1 h-px bg-primary" />
                 </div>
 
@@ -210,7 +209,7 @@ export default function LoginPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       onFocus={() => setEmailFocused(true)}
                       onBlur={() => setEmailFocused(false)}
-                      placeholder="ACCESS@AGENTIC.INTEL"
+                      placeholder="EMAIL@EXAMPLE.COM"
                       className="flex-1 bg-transparent text-[12px] font-bold uppercase tracking-[0.3em] outline-none placeholder:text-muted-foreground/10 text-foreground"
                     />
                   </div>
@@ -223,14 +222,14 @@ export default function LoginPage() {
                       <Loader2 className="w-5 h-5 animate-spin mx-auto" />
                     ) : (
                       <span className="flex items-center justify-center gap-6">
-                        Incorporate <ArrowRight className="w-4 h-4" />
+                        Sign In <ArrowRight className="w-4 h-4" />
                       </span>
                     )}
                   </MagneticButton>
                 </form>
 
                 <div className="mt-16 text-center text-[10px] font-bold uppercase tracking-[0.6em] text-primary/20 hover:text-primary transition-all cursor-pointer">
-                  <Link href="/home">Initialize as Anonymous Observer</Link>
+                  <Link href="/home">Continue as Guest</Link>
                 </div>
 
                 <div className="mt-16 pt-12 border-t border-white/5 flex flex-col items-center gap-3">

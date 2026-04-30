@@ -36,8 +36,8 @@ export default function AdminDashboard() {
 
   const handleClearCache = () => {
     if (!user) return;
-    if (confirm("Are you sure you want to purge the global intelligence cache? This will force a re-synthesis on the next user visit.")) {
-      clearCache({ adminUid: user.uid }, {
+    if (confirm("Are you sure you want to clear the global cache? This will force a re-analysis on the next user visit.")) {
+      clearCache(undefined, {
         onSuccess: () => alert("Cache purged successfully."),
         onError: (err: any) => alert(err.message)
       });
@@ -46,8 +46,8 @@ export default function AdminDashboard() {
 
   const handleDelete = (id: string) => {
     if (!user) return;
-    if (confirm("DANGER: Are you sure you want to permanently delete this article from the neural record?")) {
-      deleteArticle({ adminUid: user.uid, articleId: id }, {
+    if (confirm("DANGER: Are you sure you want to permanently delete this article from the database?")) {
+      deleteArticle({ articleId: id }, {
         onSuccess: () => {
           refetch();
         },
@@ -67,10 +67,10 @@ export default function AdminDashboard() {
           <div className="neuro-beam-inner flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="flex items-center gap-4 text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-red-500 mb-4">
-                <ShieldAlert className="w-4 h-4 animate-pulse" /> Override_Console_Active
+                <ShieldAlert className="w-4 h-4 animate-pulse" /> Admin Access Active
               </div>
               <h1 className="text-4xl sm:text-6xl font-bold tracking-tighter text-foreground">
-                Directorate <span className="italic font-light opacity-30 text-red-500">Terminal</span>
+                Admin <span className="italic font-light opacity-30 text-red-500">Dashboard</span>
               </h1>
             </div>
             <div className="flex gap-4">
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
                 className="flex items-center gap-3 px-6 py-4 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-sm text-xs font-mono uppercase tracking-widest text-red-400 transition-colors"
               >
                 <RefreshCcw className={`w-4 h-4 ${isClearing ? 'animate-spin' : ''}`} />
-                {isClearing ? 'Purging...' : 'Purge AI Cache'}
+                {isClearing ? 'Clearing...' : 'Clear Cache'}
               </button>
             </div>
           </div>
@@ -94,14 +94,14 @@ export default function AdminDashboard() {
           </div>
           <div className="bento-cell p-8 border-white/5 flex flex-col gap-4">
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">Database Records</span>
-            <div className="flex items-center gap-3 text-white font-mono text-xl"><Database className="w-5 h-5 text-primary/60" /> {newsData?.articles?.length || 0} Nodes</div>
+            <div className="flex items-center gap-3 text-white font-mono text-xl"><Database className="w-5 h-5 text-primary/60" /> {newsData?.articles?.length || 0} Articles</div>
             <span className="text-xs text-muted-foreground/50">Active in index</span>
           </div>
         </div>
 
         <div className="bento-cell p-8 border-white/5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
-             <h2 className="text-lg font-mono uppercase tracking-widest text-white/60">Neural Record Index</h2>
+             <h2 className="text-lg font-mono uppercase tracking-widest text-white/60">Article Database</h2>
              <div className="relative w-full sm:w-64">
                 <input 
                   type="text" 
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
                         onClick={() => handleDelete(article.id)}
                         disabled={isDeleting}
                         className="text-red-500/50 hover:text-red-500 transition-colors p-2 disabled:opacity-50"
-                        title="Purge Record"
+                        title="Delete Article"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

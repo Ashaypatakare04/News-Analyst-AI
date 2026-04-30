@@ -22,13 +22,13 @@ import { cn } from "@/lib/utils";
 const features = [
   {
     icon: Fingerprint,
-    label: "Neural Synthesis",
-    desc: "Every article distilled into bullet-point intelligence through a proprietary synthesis engine.",
+    label: "AI Summary",
+    desc: "Every article distilled into bullet-point intelligence through a proprietary AI engine.",
   },
   {
     icon: ShieldCheck,
     label: "Integrity Verification",
-    desc: "Rigorous cross-referencing and contradiction detection to establish ontological truth.",
+    desc: "Rigorous cross-referencing and contradiction detection to establish verified facts.",
   },
   {
     icon: Search,
@@ -113,9 +113,9 @@ export default function LandingPage() {
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-16 text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/30">
-            <Link href="/home" className="hover:text-primary/60 transition-all duration-500">Neural Index</Link>
+            <Link href="/home" className="hover:text-primary/60 transition-all duration-500">News Feed</Link>
             <Link href="/brief" className="hover:text-primary/60 transition-all duration-500">Briefing</Link>
-            <Link href="/ask" className="hover:text-primary/60 transition-all duration-500">Consult</Link>
+            <Link href="/ask" className="hover:text-primary/60 transition-all duration-500">Ask AI</Link>
           </nav>
           <div className="hidden sm:flex items-center gap-8">
             <Link href="/login">
@@ -142,9 +142,9 @@ export default function LandingPage() {
               className="md:hidden bg-background/95 backdrop-blur-2xl border-b border-white/5 overflow-hidden"
             >
               <nav className="flex flex-col p-8 gap-8 text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/40">
-                <Link href="/home" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Neural Index</Link>
+                <Link href="/home" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">News Feed</Link>
                 <Link href="/brief" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Briefing</Link>
-                <Link href="/ask" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Consult</Link>
+                <Link href="/ask" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Ask AI</Link>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="pt-4 border-t border-white/5 text-primary">
                   Initialize Access Terminal
                 </Link>
@@ -166,7 +166,7 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-6 mb-12 group cursor-none">
             <div className="w-1 h-1 rounded-full bg-primary/40 animate-pulse-live" />
             <span className="text-primary/40 text-[9px] font-bold uppercase tracking-[0.6em]">
-              Neural Pipeline v8.4 Refined
+              AI Analysis Engine v8.4
             </span>
           </div>
 
@@ -179,7 +179,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-foreground/45 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto font-light mb-20 tracking-tight text-editorial">
-            The world's most sophisticated neural synthesis platform. Distilling planetary-scale data into precision executive intelligence.
+            The world's most sophisticated AI news platform. Summarizing global news into key insights.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-10 items-center justify-center">
@@ -257,7 +257,7 @@ export default function LandingPage() {
             <div className="text-center space-y-12">
               <span className="text-prestige">02 // The Synthesis</span>
               <h2 className="text-5xl md:text-7xl font-medium tracking-tighter leading-[1.1] max-w-4xl mx-auto">
-                Neural synthesis for the <br />
+                AI analysis for the <br />
                 <span className="text-primary/60 italic font-light">post-information age.</span>
               </h2>
             </div>
@@ -281,7 +281,7 @@ export default function LandingPage() {
                <div className="flex flex-col justify-center space-y-12">
                   <h3 className="text-3xl font-medium tracking-tight">One platform. Definitive truth.</h3>
                   <p className="text-foreground/45 text-lg leading-relaxed font-light text-editorial">
-                    Agentic Intel doesn't just aggregate; it synthesizes. Our neural pipeline cross-references global signals in real-time, detecting contradictions and establishing a definitive ontological map for every event.
+                    Agentic Intel doesn't just aggregate news; it analyzes it. Our AI engine cross-references global stories in real-time, detecting contradictions and establishing verified facts for every event.
                   </p>
                   <div className="grid grid-cols-2 gap-12">
                      <div className="space-y-4">
@@ -416,11 +416,11 @@ export default function LandingPage() {
               mounted && theme !== "dark" && "font-serif"
             )}>
               Begin your<br />
-              <span className="italic font-light text-foreground/30">synthesis.</span>
+              <span className="italic font-light text-foreground/30">analysis.</span>
             </h2>
             
             <p className="text-[10px] font-bold uppercase tracking-[0.8em] text-primary/20 mb-24 px-12 leading-relaxed">
-              Institutional Grade • Neural Synthesis • Ontological Truth
+              Institutional Grade • AI Analysis • Verified Facts
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-16 relative z-10">
@@ -430,7 +430,7 @@ export default function LandingPage() {
                 </MagneticButton>
               </Link>
               <Link href="/home" className="text-foreground/30 hover:text-primary/60 text-[10px] font-bold uppercase tracking-[0.7em] transition-all duration-1000">
-                Browse Neural Index
+                Browse News Feed
               </Link>
             </div>
           </motion.div>
@@ -450,9 +450,9 @@ export default function LandingPage() {
             )}>AGENTIC<span className="text-primary/40 font-sans font-light ml-3 text-[10px]">INTEL</span></span>
           </div>
           <div className="flex flex-col md:flex-row items-center gap-20 text-[11px] font-bold uppercase tracking-[0.6em] text-foreground/20 text-editorial">
-            <Link href="/home" className="hover:text-primary/60 transition-all duration-1000">Neural Index</Link>
-            <Link href="/brief" className="hover:text-primary/60 transition-all duration-1000">Directed Synthesis</Link>
-            <Link href="/ask" className="hover:text-primary/60 transition-all duration-1000">Analyst Hub</Link>
+            <Link href="/home" className="hover:text-primary/60 transition-all duration-1000">News Feed</Link>
+            <Link href="/brief" className="hover:text-primary/60 transition-all duration-1000">Daily Briefing</Link>
+            <Link href="/ask" className="hover:text-primary/60 transition-all duration-1000">Ask AI</Link>
           </div>
           <p className="text-[9px] text-foreground/15 uppercase tracking-[0.6em] font-light">
             © {new Date().getFullYear()} AGENTIC INTEL IMPRINT. 
