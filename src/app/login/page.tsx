@@ -86,6 +86,7 @@ export default function LoginPage() {
             AGENTIC<span className="text-primary/40 font-sans font-light tracking-[0.4em] ml-2 text-[11px]">INTEL</span>
           </span>
         </Link>
+        <Link href="/home" className="group flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.4em] text-primary/40 hover:text-primary transition-all">
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-2 transition-transform" /> Back to Home
         </Link>
       </header>

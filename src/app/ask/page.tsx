@@ -27,6 +27,7 @@ export default function AskPage() {
   ]);
   const [synthesisStep, setSynthesisStep] = useState(0);
   
+  const synthesisPhases = [
     "SEARCHING_NEWS...",
     "ANALYZING_ARTICLES...",
     "VERIFYING_FACTS...",
@@ -151,18 +152,22 @@ export default function AskPage() {
                         {msg.role === "assistant" ? (
                           <div className="space-y-6">
                              {msg.reasoning && (
-                               <div className="mb-10 p-8 bg-black/40 border-l border-primary/30 rounded-sm shadow-inner">
+                               <div className="space-y-4 mb-10">
+                                 <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40">
                                    <Brain className="w-3.5 h-3.5" /> AI_Reasoning
                                  </div>
-                                 <div className="text-[12px] font-mono italic text-foreground/40 leading-relaxed">
+                                 <div className="p-8 bg-black/40 border-l border-primary/30 rounded-sm shadow-inner text-[12px] font-mono italic text-foreground/40 leading-relaxed">
                                    {msg.reasoning}
                                  </div>
                                </div>
                              )}
+                             <div className="space-y-4">
+                               <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40">
                                  <Terminal className="w-3.5 h-3.5" /> AI_Answer
-                             </div>
-                             <div className="text-foreground/90 font-light text-base md:text-lg">
-                                <ReactMarkdown>{msg.content}</ReactMarkdown>
+                               </div>
+                               <div className="text-foreground/90 font-light text-base md:text-lg">
+                                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                               </div>
                              </div>
                           </div>
                         ) : (
