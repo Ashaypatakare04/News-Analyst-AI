@@ -16,7 +16,8 @@ const ratelimit = env.UPSTASH_REDIS_REST_URL
 
 const querySchema = z.object({
   category: z.string().default("general"),
-  pageSize: z.coerce.number().int().min(1).max(50).default(20),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  q: z.string().optional(),
 });
 
 export async function GET(request: Request) {
@@ -38,25 +39,37 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Bad Request", details: parsed.error.flatten() }, { status: 400 });
     }
     
-    const { category, pageSize } = parsed.data;
+    const { category, pageSize, q: keyword } = parsed.data;
 
-    // 3. Database Query (Using Admin SDK securely)
-    let q: any = adminDb.collection("articles").orderBy("publishedAt", "desc").limit(pageSize);
+    // 3. Database Query
+    // Note: If keyword is present, we fetch more items to allow for meaningful in-memory filtering
+    const fetchLimit = keyword ? Math.min(pageSize * 3, 200) : pageSize;
+    
+    let queryRef: any = adminDb.collection("articles").orderBy("publishedAt", "desc").limit(fetchLimit);
 
     if (category !== "all" && category !== "All") {
-      q = adminDb.collection("articles")
+      queryRef = adminDb.collection("articles")
         .where("category", "==", category)
         .orderBy("publishedAt", "desc")
-        .limit(pageSize);
+        .limit(fetchLimit);
     }
 
-    // Explicitly NO try/catch around get() to force missing index errors to surface in server logs
-    const snapshot = await q.get();
+    const snapshot = await queryRef.get();
 
-    const articles = snapshot.docs.map((doc: any) => ({
+    let articles = snapshot.docs.map((doc: any) => ({
       id: doc.id,
       ...doc.data()
     }));
+
+    // 4. In-memory Keyword Filtering (Fallback for Firestore missing full-text search)
+    if (keyword) {
+      const lowKeyword = keyword.toLowerCase();
+      articles = articles.filter((a: any) => 
+        a.title?.toLowerCase().includes(lowKeyword) || 
+        a.description?.toLowerCase().includes(lowKeyword) ||
+        a.content?.toLowerCase().includes(lowKeyword)
+      ).slice(0, pageSize);
+    }
 
     return NextResponse.json({ articles, total: articles.length, page: 1, pageSize });
   } catch (err: any) {

@@ -1,14 +1,14 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Moon, Coffee, Sun, Zap } from "lucide-react";
+import { Moon, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MagneticButton } from "./motion/magnetic-button";
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -18,11 +18,17 @@ export function ThemeToggle() {
     return <div className="w-10 h-10 border border-white/5 opacity-20" />;
   }
 
-  const isWarm = theme === "warm";
+  // Use resolvedTheme to handle system preference fallbacks if any
+  const currentTheme = theme || resolvedTheme;
+  const isWarm = currentTheme === "warm";
+
+  const toggleTheme = () => {
+    setTheme(isWarm ? "dark" : "warm");
+  };
 
   return (
     <MagneticButton
-      onClick={() => setTheme(isWarm ? "dark" : "warm")}
+      onClick={toggleTheme}
       className="relative w-10 h-10 glass border-white/5 flex items-center justify-center group overflow-hidden"
     >
       <div className="absolute inset-0 bg-primary/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full blur-xl" />

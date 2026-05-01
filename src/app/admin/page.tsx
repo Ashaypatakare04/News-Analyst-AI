@@ -7,13 +7,28 @@ import { Layout } from "@/components/layout";
 import { useGetNews, useClearIntelligenceCache, useAdminDeleteArticle } from "@/lib/api-client-react";
 import { ShieldAlert, Trash2, RefreshCcw, Activity, ShieldCheck, Database, Search } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
 
 export default function AdminDashboard() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   
-  const { data: newsData, isLoading: newsLoading, refetch } = useGetNews({ q: search, pageSize: 100 });
+  // Debounce helper
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data: newsData, isLoading: newsLoading, refetch } = useGetNews({ 
+    q: debouncedSearch || undefined, 
+    pageSize: 100 
+  });
+  
   const { mutate: clearCache, isPending: isClearing } = useClearIntelligenceCache();
   const { mutate: deleteArticle, isPending: isDeleting } = useAdminDeleteArticle();
 
@@ -56,6 +71,18 @@ export default function AdminDashboard() {
     }
   };
 
+  // Robust date formatting helper
+  const formatDateSafe = (dateString?: string) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "Invalid Date";
+      return format(date, 'MMM d');
+    } catch (e) {
+      return "Error";
+    }
+  };
+
   return (
     <Layout>
       <div className="fixed inset-0 z-0 pointer-events-none opacity-10 mix-blend-screen bg-red-950/20">
@@ -94,7 +121,10 @@ export default function AdminDashboard() {
           </div>
           <div className="bento-cell p-8 border-white/5 flex flex-col gap-4">
             <span className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">Database Records</span>
-            <div className="flex items-center gap-3 text-white font-mono text-xl"><Database className="w-5 h-5 text-primary/60" /> {newsData?.articles?.length || 0} Articles</div>
+            <div className="flex items-center gap-3 text-white font-mono text-xl">
+              {newsLoading ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Database className="w-5 h-5 text-primary/60" />}
+              {newsData?.articles?.length || 0} Articles
+            </div>
             <span className="text-xs text-muted-foreground/50">Active in index</span>
           </div>
         </div>
@@ -106,11 +136,11 @@ export default function AdminDashboard() {
                 <input 
                   type="text" 
                   placeholder="Search index..." 
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className="w-full bg-transparent border-b border-white/10 pb-2 text-sm focus:outline-none focus:border-red-500 transition-colors font-mono"
                 />
-                <Search className="absolute right-0 top-0 w-4 h-4 text-white/20" />
+                <Search className={cn("absolute right-0 top-0 w-4 h-4 transition-colors", newsLoading ? "text-red-500 animate-spin" : "text-white/20")} />
              </div>
           </div>
 
@@ -135,7 +165,7 @@ export default function AdminDashboard() {
                       </div>
                     </td>
                     <td className="py-4 text-white/50 text-xs uppercase tracking-wider">{article.source}</td>
-                    <td className="py-4 text-white/50 text-xs">{format(new Date(article.publishedAt), 'MMM d')}</td>
+                    <td className="py-4 text-white/50 text-xs">{formatDateSafe(article.publishedAt)}</td>
                     <td className="py-4 text-white/50 text-xs">{article.trustScore || "Pending"}</td>
                     <td className="py-4 text-right">
                       <button 

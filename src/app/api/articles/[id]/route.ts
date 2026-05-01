@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { adminDb } from "@/lib/firebase-admin";
 
 export async function GET(
   request: Request,
@@ -8,10 +7,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const articleRef = doc(db, "articles", id);
-    const snap = await getDoc(articleRef);
+    const snap = await adminDb.collection("articles").doc(id).get();
 
-    if (!snap.exists()) {
+    if (!snap.exists) {
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
