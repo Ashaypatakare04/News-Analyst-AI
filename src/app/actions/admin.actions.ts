@@ -29,3 +29,40 @@ export async function clearIntelligenceCacheSecure() {
     return { success: false, error: error.message };
   }
 }
+
+export async function syncNewsAction() {
+  try {
+    await requireAdminSession();
+    const { fetchAndStoreNews } = await import("@/lib/newsapi");
+    await fetchAndStoreNews("general", undefined, 10);
+    return { success: true, message: "News database synchronized with global index." };
+  } catch (error: any) {
+    console.error("[SYNC_NEWS_ERROR]", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function generateGlobalIntelligenceAction() {
+  try {
+    await requireAdminSession();
+    const { generateIntelligence, generateTrending, generateDailyBrief } = await import("@/lib/ai/index");
+    
+    // Force regeneration by skipping cache
+    const [intel, trending, brief] = await Promise.all([
+      generateIntelligence(true),
+      generateTrending(true),
+      generateDailyBrief(true)
+    ]);
+
+
+    return { 
+      success: true, 
+      message: "Neural synthesis complete. Intelligence vectors updated.",
+      data: { intel, trending, brief }
+    };
+  } catch (error: any) {
+    console.error("[GEN_INTEL_ERROR]", error);
+    return { success: false, error: error.message };
+  }
+}
+

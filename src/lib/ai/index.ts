@@ -2,7 +2,8 @@
 import { geminiModel, geminiVisionModel } from "../gemini";
 import { openai } from "../openai";
 import { db } from "../firebase";
-import { doc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, orderBy, limit } from "firebase/firestore";
+import { doc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, orderBy, limit, setDoc } from "firebase/firestore";
+
 
 /**
  * Deterministic mock response generator for institutional-grade fallback.
@@ -344,9 +345,19 @@ export async function analyzeUploadedArticle(imageBase64: string, mimeType: stri
 let intelligenceCache: { data: any; generatedAt: number } | null = null;
 const INTELLIGENCE_CACHE_TTL = 30 * 60 * 1000;
 
-export async function generateIntelligence() {
-  if (intelligenceCache && Date.now() - intelligenceCache.generatedAt < INTELLIGENCE_CACHE_TTL) {
-    return intelligenceCache.data;
+export async function generateIntelligence(force = false) {
+  const cacheRef = doc(db, "metadata", "intelligence");
+  
+  if (!force) {
+    const cacheSnap = await getDoc(cacheRef);
+    if (cacheSnap && typeof cacheSnap.exists === 'function' && cacheSnap.exists()) {
+      const cache = cacheSnap.data();
+
+      const ttl = 12 * 60 * 60 * 1000; // 12 hours for manual mode
+      if (Date.now() - new Date(cache.generatedAt).getTime() < ttl) {
+        return cache;
+      }
+    }
   }
 
   const q = query(collection(db, "articles"), orderBy("createdAt", "desc"), limit(20));
@@ -391,16 +402,22 @@ Generate the top intelligence signal.`;
     generatedAt: new Date().toISOString(),
   };
 
-  intelligenceCache = { data, generatedAt: Date.now() };
+  await setDoc(cacheRef, data);
   return data;
 }
 
-let trendingCache: { data: any; generatedAt: number } | null = null;
-const TRENDING_CACHE_TTL = 20 * 60 * 1000;
+export async function generateTrending(force = false) {
+  const cacheRef = doc(db, "metadata", "trending");
 
-export async function generateTrending() {
-  if (trendingCache && Date.now() - trendingCache.generatedAt < TRENDING_CACHE_TTL) {
-    return trendingCache.data;
+  if (!force) {
+    const cacheSnap = await getDoc(cacheRef);
+    if (cacheSnap && typeof cacheSnap.exists === 'function' && cacheSnap.exists()) {
+      const cache = cacheSnap.data();
+      const ttl = 12 * 60 * 60 * 1000;
+      if (Date.now() - new Date(cache.generatedAt).getTime() < ttl) {
+        return cache;
+      }
+    }
   }
 
   const q = query(collection(db, "articles"), orderBy("createdAt", "desc"), limit(30));
@@ -437,11 +454,24 @@ ${titles}`;
     generatedAt: new Date().toISOString(),
   };
 
-  trendingCache = { data, generatedAt: Date.now() };
+  await setDoc(cacheRef, data);
   return data;
 }
 
-export async function generateDailyBrief() {
+export async function generateDailyBrief(force = false) {
+  const cacheRef = doc(db, "metadata", "daily_brief");
+
+  if (!force) {
+    const cacheSnap = await getDoc(cacheRef);
+    if (cacheSnap && typeof cacheSnap.exists === 'function' && cacheSnap.exists()) {
+      const cache = cacheSnap.data();
+      const ttl = 12 * 60 * 60 * 1000;
+      if (Date.now() - new Date(cache.generatedAt).getTime() < ttl) {
+        return cache;
+      }
+    }
+  }
+
   const q = query(collection(db, "articles"), orderBy("createdAt", "desc"), limit(25));
   const snaps = await getDocs(q);
   const articles = snaps.docs.map(doc => doc.data());
@@ -475,20 +505,27 @@ Generate the daily intelligence brief.`;
   const cleanText = responseText.replace(/```json\n?/, "").replace(/\n?```/, "").trim();
   const result = JSON.parse(cleanText);
 
-  return {
+  const data = {
     keyEvents: result.keyEvents as string[],
     emergingSignals: result.emergingSignals as string[],
     strategicInsight: result.strategicInsight as string,
     generatedAt: new Date().toISOString(),
   };
+
+  await setDoc(cacheRef, data);
+  return data;
 }
+
 
 export async function clearIntelligenceCache(adminUid: string) {
   const adminDoc = await getDoc(doc(db, "admins", adminUid));
   if (!adminDoc.exists()) throw new Error("Unauthorized: Admin access required.");
   
-  intelligenceCache = null;
-  trendingCache = null;
+  await Promise.all([
+    deleteDoc(doc(db, "metadata", "intelligence")),
+    deleteDoc(doc(db, "metadata", "trending")),
+    deleteDoc(doc(db, "metadata", "daily_brief"))
+  ]);
   return { success: true, message: "Global Intelligence Cache Purged Successfully" };
 }
 

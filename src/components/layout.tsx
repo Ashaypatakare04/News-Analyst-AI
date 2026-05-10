@@ -33,11 +33,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   const navItems = [
-    { path: "/home", label: "Global Intel", icon: Newspaper },
-    { path: "/brief", label: "Executive Brief", icon: BookOpen },
-    { path: "/ask", label: "Consult Analyst", icon: MessageSquare },
-    { path: "/upload", label: "Data Input", icon: Upload },
+    { path: "/home", label: "Latest News", icon: Newspaper },
+    { path: "/brief", label: "Daily Summary", icon: BookOpen },
+    { path: "/ask", label: "Ask AI", icon: MessageSquare },
+    { path: "/upload", label: "Upload News", icon: Upload },
   ];
+
 
   return (
     <div className="min-h-screen flex flex-col relative selection:bg-primary/20 overflow-x-hidden md:cursor-none">
@@ -62,10 +63,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex flex-col -gap-1">
               <span className="font-serif font-bold text-2xl tracking-tighter text-foreground leading-none">
-                AGENTIC<span className="text-primary/40 font-sans font-light tracking-[0.4em] ml-3 text-xs">INTEL</span>
+                AGENTIC<span className="text-primary/40 font-sans font-light tracking-[0.4em] ml-3 text-xs">NEWS</span>
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/40 mt-1 opacity-0 group-hover:opacity-100 transition-all duration-1000">Institutional Grade</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/40 mt-1 opacity-0 group-hover:opacity-100 transition-all duration-1000">AI News Assistant</span>
             </div>
+
           </Link>
 
 
@@ -112,10 +114,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
             ) : (
               <Link href="/login">
                 <button className="px-8 py-2.5 border border-primary/30 text-primary text-[12px] font-bold uppercase tracking-[0.4em] hover:bg-primary/5 transition-all shadow-prestige">
-                  Access Terminal
+                  Sign In
                 </button>
               </Link>
             )}
+
             <div className="pl-6 border-l border-border/20">
               <ThemeToggle />
             </div>
@@ -186,11 +189,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 ) : (
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
                     <button className="w-full p-4 flex items-center justify-center gap-3 text-[10px] font-bold uppercase tracking-widest bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">
-                      Access Terminal
+                      Sign In
                     </button>
                   </Link>
                 )}
               </div>
+
             </nav>
           </motion.div>
         )}
@@ -203,17 +207,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-white/5 bg-background/40 py-24 mt-auto">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col items-center gap-12">
           <div className="flex flex-col items-center gap-4 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000 group cursor-default">
-            <span className="font-serif font-bold text-sm tracking-[0.6em] text-foreground uppercase">Agentic Intel Imprint</span>
+            <span className="font-serif font-bold text-sm tracking-[0.6em] text-foreground uppercase">Agentic News Assistant</span>
             <div className="w-16 h-px bg-primary/20 group-hover:w-32 transition-all duration-1000" />
-            <div className="text-[10px] font-bold tracking-[0.8em] text-primary/60 uppercase">Global Directive v9.4</div>
+            <div className="text-[10px] font-bold tracking-[0.8em] text-primary/60 uppercase">AI Version 2.0</div>
           </div>
           <p className="text-muted-foreground/60 text-xs tracking-[0.4em] text-center uppercase font-light max-w-xl leading-loose italic">
-            Institutional synthesis for the post-information age.
+            Simplified news analysis for everyone.
             <br />
-            Data mapping at planetary scale. Integrity verified via RSA-4096.
+            AI-powered facts and summaries.
             <br />
-            © {new Date().getFullYear()} AGENTIC INTEL IMPRINT.
+            © {new Date().getFullYear()} AGENTIC NEWS.
           </p>
+
         </div>
       </footer>
 

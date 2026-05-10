@@ -1,10 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
-import { Brain } from "lucide-react";
+import { Brain, Loader2, Zap } from "lucide-react";
 import { useTheme } from "next-themes";
 import { TrustBadge } from "./trust-badge";
-import { type Article } from "@/lib/api-client-react";
+import { type Article, useGenerateSummary } from "@/lib/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+
+
 import { cn } from "@/lib/utils";
 import { AntiGravityCard } from "./motion/anti-gravity-card";
 
@@ -24,12 +28,29 @@ export function getCategoryColor(category: string) {
 const DEFAULT_IMAGES = [
   "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop", // Option 3A: Highrise
   "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=2000&auto=format&fit=crop", // Option 3B: Financial Boards
-  "https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=2000&auto=format&fit=crop"  // Option 3C: Architecture
+  "https://images.unsplash.com/photo-1481026469463-66327c86e544?q=80&w=2000&auto=format&fit=crop", // Option 3C: Architecture
+  "/fallback-news.png"
 ];
 
 export function ArticleCard({ article, index = 0, speed }: { article: Article; index?: number; speed?: "slow" | "medium" | "fast" }) {
   const { theme } = useTheme();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const imageUrl = article.imageUrl || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
+
+  const { mutate: summarize, isPending } = useGenerateSummary({
+    mutation: {
+      onSuccess: () => {
+        toast({ title: "Intelligence synthesis complete", description: "The AI summary has been updated." });
+        queryClient.invalidateQueries({ queryKey: ["article", article.id] });
+        queryClient.invalidateQueries({ queryKey: ["news"] });
+      },
+      onError: (err: any) => toast({ title: "Error", description: err.message, variant: "destructive" })
+    }
+  });
+
+
 
   return (
     <AntiGravityCard speed={speed} className="w-full h-full neuro-beam rounded-sm overflow-hidden">
@@ -79,7 +100,7 @@ export function ArticleCard({ article, index = 0, speed }: { article: Article; i
             {article.description}
           </p>
 
-          {article.aiSummary && (
+          {article.aiSummary ? (
             <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4 bg-white/[0.01] -mx-8 -mb-8 p-8 border-t border-white/5 group-hover:bg-primary/[0.02] transition-colors">
               <div className="text-primary/40 text-[9px] font-mono font-bold uppercase tracking-[0.5em] flex items-center gap-3">
                 <Brain className="w-3 h-3" /> AI Summary
@@ -88,7 +109,23 @@ export function ArticleCard({ article, index = 0, speed }: { article: Article; i
                 "{article.aiSummary}"
               </p>
             </div>
+          ) : (
+            <div className="mt-auto pt-6 border-t border-white/5 flex flex-col gap-4 bg-white/[0.01] -mx-8 -mb-8 p-8 border-t border-white/5 group-hover:bg-primary/[0.02] transition-colors">
+              <button 
+                onClick={(e) => { e.preventDefault(); summarize({ id: article.id }); }}
+                disabled={isPending}
+                className="flex items-center justify-between w-full group/btn"
+              >
+                <div className="text-primary/20 text-[9px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 group-hover/btn:text-primary/60 transition-colors">
+                  {isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                  Get AI Summary
+                </div>
+                <span className="text-[8px] font-bold text-primary/10 uppercase tracking-[0.2em] group-hover/btn:text-primary/30 transition-colors">Uses AI Credits</span>
+              </button>
+            </div>
           )}
+
+
         </div>
       </div>
     </AntiGravityCard>

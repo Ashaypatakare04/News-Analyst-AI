@@ -37,8 +37,9 @@ const features = [
   },
   {
     icon: BarChart3,
-    label: "Executive Summary",
-    desc: "Key events and emerging signals condensed for high-velocity decision making.",
+    label: "Daily Summary",
+    desc: "Key events and emerging signals condensed for quick understanding.",
+
   },
   {
     icon: Info,
@@ -96,7 +97,14 @@ export default function LandingPage() {
       {/* Background Persistence Layer */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="bg-noise absolute inset-0 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+        <img 
+          src="/hero-bg.png" 
+          alt="Neural Background" 
+          className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-30 mix-blend-overlay"
+        />
       </div>
+
 
       {/* Nav Overlay */}
       <header className="fixed top-0 inset-x-0 z-50 bg-background/20 backdrop-blur-xl border-b border-white/[0.03]">
@@ -109,7 +117,8 @@ export default function LandingPage() {
               "font-bold text-lg sm:text-xl tracking-tighter text-foreground/90",
               mounted && theme !== "dark" && "font-serif"
             )}>
-              AGENTIC<span className="text-primary/30 font-sans font-light tracking-[0.2em] sm:tracking-[0.4em] ml-2 sm:ml-3 text-[10px]">INTEL</span>
+              AGENTIC<span className="text-primary/30 font-sans font-light tracking-[0.2em] sm:tracking-[0.4em] ml-2 sm:ml-3 text-[10px]">NEWS</span>
+
             </span>
           </Link>
           <nav className="hidden md:flex items-center gap-16 text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/30">
@@ -120,7 +129,8 @@ export default function LandingPage() {
           <div className="hidden sm:flex items-center gap-8">
             <Link href="/login">
               <MagneticButton className="px-10 py-3.5 bg-primary/90 text-primary-foreground text-[10px] font-bold uppercase tracking-[0.5em]">
-                Initialize
+                Get Started
+
               </MagneticButton>
             </Link>
           </div>
@@ -146,7 +156,8 @@ export default function LandingPage() {
                 <Link href="/brief" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Briefing</Link>
                 <Link href="/ask" onClick={() => setMobileMenuOpen(false)} className="hover:text-primary transition-colors">Ask AI</Link>
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="pt-4 border-t border-white/5 text-primary">
-                  Initialize Access Terminal
+                  Sign In
+
                 </Link>
               </nav>
             </motion.div>
@@ -166,7 +177,8 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-6 mb-12 group cursor-none">
             <div className="w-1 h-1 rounded-full bg-primary/40 animate-pulse-live" />
             <span className="text-primary/40 text-[9px] font-bold uppercase tracking-[0.6em]">
-              AI Analysis Engine v8.4
+              AI News Engine v2.0
+
             </span>
           </div>
 
@@ -185,11 +197,13 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-10 items-center justify-center">
             <Link href="/login">
               <MagneticButton className="px-14 py-7 bg-primary text-primary-foreground font-bold text-xs uppercase tracking-[0.6em]">
-                Start Your Session
+                Get Started
+
               </MagneticButton>
             </Link>
             <Link href="/home" className="flex items-center gap-5 text-[10px] font-bold uppercase tracking-[0.5em] text-foreground/30 hover:text-primary/60 transition-all duration-700">
-              <Globe className="w-4 h-4 opacity-40" /> Global Intel Index
+              <Globe className="w-4 h-4 opacity-40" /> Latest News Index
+
             </Link>
           </div>
         </motion.div>
@@ -266,16 +280,22 @@ export default function LandingPage() {
                {/* Left Visual: The Lens */}
                <div className="relative group">
                   <div className="absolute inset-0 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                  <AntiGravityCard intensity={4} speed="medium" className="glass p-20 aspect-video flex flex-col justify-center items-center gap-12 border-white/[0.03]">
-                     <div className="w-24 h-24 rounded-full border border-primary/20 flex items-center justify-center transition-all duration-1000 group-hover:border-primary/60 group-hover:scale-110">
-                        <Brain className="w-8 h-8 text-primary shadow-[0_0_20px_hsla(var(--primary),0.5)]" />
-                     </div>
-                     <div className="text-center space-y-4">
-                        <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/40">Vector_Neutralization_Active</div>
-                        <div className="h-[1px] w-48 bg-primary/10 mx-auto" />
+                  <AntiGravityCard intensity={4} speed="medium" className="glass p-4 aspect-video flex flex-col justify-center items-center border-white/[0.03] overflow-hidden">
+                     <div className="relative w-full h-full overflow-hidden">
+                        <img 
+                          src="/synthesis.png" 
+                          alt="Neural Synthesis" 
+                          className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[3000ms] grayscale group-hover:grayscale-0"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                        <div className="absolute bottom-8 left-8 right-8 text-center space-y-4">
+                           <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/80 drop-shadow-2xl">Neural_Synthesis_Active</div>
+                           <div className="h-[1px] w-48 bg-primary/40 mx-auto" />
+                        </div>
                      </div>
                   </AntiGravityCard>
                </div>
+
 
                {/* Right Copy */}
                <div className="flex flex-col justify-center space-y-12">
@@ -353,7 +373,8 @@ export default function LandingPage() {
                <AntiGravityCard intensity={6} speed="slow" className="glass p-20 border-white/[0.03] space-y-16">
                   <div className="flex items-center gap-6">
                     <ShieldCheck className="w-6 h-6 text-primary/60" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-foreground/40">Institutional Integrity Protocol</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.6em] text-foreground/40">Professional Truth Protocol</span>
+
                   </div>
                   <div className="space-y-10">
                      {[
@@ -368,7 +389,8 @@ export default function LandingPage() {
                      ))}
                   </div>
                   <div className="flex items-center gap-4 text-emerald-500/60 text-[9px] font-bold uppercase tracking-[0.4em]">
-                     <CheckCircle2 className="w-3 h-3" /> System Verified by Palantir-Class Engine
+                     <CheckCircle2 className="w-3 h-3" /> System Verified for Accuracy
+
                   </div>
                </AntiGravityCard>
             </div>
@@ -426,7 +448,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-16 relative z-10">
               <Link href="/login">
                 <MagneticButton className="px-20 py-8 bg-primary text-primary-foreground font-bold text-[11px] uppercase tracking-[0.7em]">
-                  Initialize Access
+                  Sign In
                 </MagneticButton>
               </Link>
               <Link href="/home" className="text-foreground/30 hover:text-primary/60 text-[10px] font-bold uppercase tracking-[0.7em] transition-all duration-1000">
@@ -447,15 +469,17 @@ export default function LandingPage() {
             <span className={cn(
               "font-bold text-xs tracking-[0.8em] text-foreground/80",
               mounted && theme !== "dark" && "font-serif"
-            )}>AGENTIC<span className="text-primary/40 font-sans font-light ml-3 text-[10px]">INTEL</span></span>
+            )}>AGENTIC<span className="text-primary/40 font-sans font-light ml-3 text-[10px]">NEWS</span></span>
+
           </div>
           <div className="flex flex-col md:flex-row items-center gap-20 text-[11px] font-bold uppercase tracking-[0.6em] text-foreground/20 text-editorial">
             <Link href="/home" className="hover:text-primary/60 transition-all duration-1000">News Feed</Link>
-            <Link href="/brief" className="hover:text-primary/60 transition-all duration-1000">Daily Briefing</Link>
+            <Link href="/brief" className="hover:text-primary/60 transition-all duration-1000">Daily Summary</Link>
+
             <Link href="/ask" className="hover:text-primary/60 transition-all duration-1000">Ask AI</Link>
           </div>
           <p className="text-[9px] text-foreground/15 uppercase tracking-[0.6em] font-light">
-            © {new Date().getFullYear()} AGENTIC INTEL IMPRINT. 
+            © {new Date().getFullYear()} AGENTIC NEWS. 
           </p>
         </div>
       </footer>

@@ -75,13 +75,9 @@ export async function fetchAndStoreNews(category = "general", q?: string, pageSi
     }
 
     if (newIds.length > 0) {
-      console.log(`Auto-summarizing ${newIds.length} new article(s)...`);
-      for (const id of newIds.slice(0, 5)) {
-        generateSummary(id).catch((err) =>
-          console.warn(`Auto-summarize failed for article ${id}:`, err?.message)
-        );
-      }
+      console.log(`Successfully stored ${newIds.length} new article(s). Manual summarization required.`);
     }
+
   } catch (err) {
     console.error("NewsAPI error:", err);
   }

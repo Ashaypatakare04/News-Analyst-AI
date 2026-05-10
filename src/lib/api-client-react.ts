@@ -176,3 +176,28 @@ export function useAdminDeleteArticle(options?: { mutation?: any }) {
     ...options?.mutation
   });
 }
+
+export function useSyncNews(options?: { mutation?: any }) {
+  return useMutation({
+    mutationFn: async () => {
+      const { syncNewsAction } = await import("@/app/actions/admin.actions");
+      const result = await syncNewsAction();
+      if (!result.success) throw new Error(result.error);
+      return result;
+    },
+    ...options?.mutation
+  });
+}
+
+export function useGenerateGlobalIntelligence(options?: { mutation?: any }) {
+  return useMutation({
+    mutationFn: async () => {
+      const { generateGlobalIntelligenceAction } = await import("@/app/actions/admin.actions");
+      const result = await generateGlobalIntelligenceAction();
+      if (!result.success) throw new Error(result.error);
+      return result;
+    },
+    ...options?.mutation
+  });
+}
+

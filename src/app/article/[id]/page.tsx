@@ -271,8 +271,9 @@ export default function ArticlePage() {
                   className="px-6 py-3 hover:bg-white/[0.02] text-foreground text-[11px] font-mono font-bold uppercase tracking-[0.4em] flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                   {verMut.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" /> : <ShieldCheck className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />}
-                  VERIFY_INTEGRITY
+                  FACT_CHECK
                 </MagneticButton>
+
 
                 <MagneticButton
                   onClick={() => audMut.mutate({ id: articleId })}
@@ -384,7 +385,7 @@ export default function ArticlePage() {
                         {article.bulletPoints && article.bulletPoints.length > 0 && (
                           <div className="space-y-16">
                             <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40 flex items-center gap-6">
-                               <div className="w-12 h-px bg-primary/20" /> Core_Signals
+                               <div className="w-12 h-px bg-primary/20" /> Key Insights
                             </h3>
                             <div className="grid gap-12">
                               {article.bulletPoints.map((bp: string, i: number) => (
@@ -403,7 +404,8 @@ export default function ArticlePage() {
 
                         {actors && actors.length > 0 && (
                           <div className="space-y-12">
-                            <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Intelligence_Nodes_Identified</h3>
+                            <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Key People & Groups</h3>
+
                             <div className="flex flex-wrap gap-x-16 gap-y-6">
                               {actors.map((actor: string, i: number) => (
                                 <motion.span 
@@ -422,7 +424,8 @@ export default function ArticlePage() {
                       <div className="text-center py-40 bento-cell neuro-beam flex flex-col items-center">
                         <div className="neuro-beam-inner flex flex-col items-center w-full py-20">
                           <ScanLine className="w-16 h-16 text-primary/10 mb-10 animate-pulse" />
-                          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-muted-foreground/40 mb-16">AI_Summary_Not_Generated</p>
+                          <p className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-muted-foreground/40 mb-16">AI_Summary_Not_Available</p>
+
                           <MagneticButton
                             onClick={() => sumMut.mutate({ id: articleId })}
                             disabled={sumMut.isPending}
@@ -475,9 +478,10 @@ export default function ArticlePage() {
                     </div>
                     <div className="mt-32 pt-16 border-t border-white/5 w-full max-w-[70ch]">
                       <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40 hover:text-primary transition-all flex items-center gap-4">
-                        <Globe className="w-4 h-4" /> Audit_Primary_Data_Source_Node
+                        <Globe className="w-4 h-4" /> Read_Original_Source
                       </a>
                     </div>
+
                   </motion.div>
                 )}
 
@@ -487,9 +491,10 @@ export default function ArticlePage() {
                       <>
                         <div className="flex flex-col md:flex-row items-end justify-between gap-16 border-b border-white/5 pb-16">
                           <div className="space-y-4">
-                            <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Verification_Protocol</h3>
-                            <div className="font-serif text-5xl font-bold text-foreground">Ontological Audit</div>
+                            <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.6em] text-primary/40">Fact Check Analysis</h3>
+                            <div className="font-serif text-5xl font-bold text-foreground">Truth Report</div>
                           </div>
+
                           <div className="flex items-center gap-20">
                             {trustPct != null && (
                               <DetailTrustMeter score={trustPct} label="Base Reliability" />
@@ -512,10 +517,11 @@ export default function ArticlePage() {
 
                         <div className="grid md:grid-cols-3 gap-12">
                           {[
-                            { label: "Consensus Agreement", val: agreementLevel, color: agreementLevel === "High" ? "text-emerald-400" : agreementLevel === "Medium" ? "text-amber-400" : "text-rose-400" },
-                            { label: "Corroboration Gap", val: article.trustDetails.sources.length.toString().padStart(2, '0'), color: "text-foreground" },
-                            { label: "Logical Anomalies", val: article.trustDetails.contradictions.length > 0 ? article.trustDetails.contradictions.length.toString().padStart(2, '0') : "ZERO", color: article.trustDetails.contradictions.length > 0 ? "text-rose-500" : "text-emerald-400" }
+                            { label: "Truth Level", val: agreementLevel, color: agreementLevel === "High" ? "text-emerald-400" : agreementLevel === "Medium" ? "text-amber-400" : "text-rose-400" },
+                            { label: "Verified Sources", val: article.trustDetails.sources.length.toString().padStart(2, '0'), color: "text-foreground" },
+                            { label: "Contradictions", val: article.trustDetails.contradictions.length > 0 ? article.trustDetails.contradictions.length.toString().padStart(2, '0') : "ZERO", color: article.trustDetails.contradictions.length > 0 ? "text-rose-500" : "text-emerald-400" }
                           ].map(stat => (
+
                             <div key={stat.label} className="space-y-6 bento-cell p-8 group hover:bg-white/[0.01] transition-all">
                                <div className="text-[9px] font-mono font-bold uppercase tracking-[0.5em] text-primary/30">{stat.label}</div>
                                <div className={cn("text-2xl font-mono font-bold tabular-nums tracking-widest", stat.color)}>{stat.val}</div>

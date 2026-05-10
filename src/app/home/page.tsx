@@ -4,15 +4,19 @@ import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Layout } from "@/components/layout";
 import { ArticleCard, getCategoryColor } from "@/components/article-card";
-import { useGetNews, useGetCategories } from "@/lib/api-client-react";
+import { useGetNews, useGetCategories, useSyncNews, useGenerateGlobalIntelligence } from "@/lib/api-client-react";
 import { useAuth } from "@/lib/auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiFetch, type IntelligenceData, type TrendingData } from "@/lib/api";
 import {
   Loader2, Search, Brain, TrendingUp, ShieldCheck,
   Activity, ArrowRight, Target, BarChart3,
-  BookOpen, TrendingDown, Fingerprint, Eye, ScanLine
+  BookOpen, TrendingDown, Fingerprint, Eye, ScanLine,
+  RefreshCcw, Database, Zap
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+
 import Link from "next/link";
 import { format } from "date-fns";
 import { TrustBadge } from "@/components/trust-badge";
@@ -57,7 +61,9 @@ const itemVars = {
 
 export default function Home() {
   const { theme } = useTheme();
+  const { toast } = useToast();
   const { isAdmin } = useAuth();
+
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -92,7 +98,32 @@ export default function Home() {
 
   const categories = ["All", ...(categoriesData?.categories || [])];
   const today = mounted ? format(new Date(), "EEEE, MMMM d, yyyy") : "-- -- --";
+  const queryClient = useQueryClient();
+  const { mutate: syncNews, isPending: isSyncing } = useSyncNews({
+    mutation: {
+      onSuccess: (res: any) => {
+        toast({ title: "Signal Synced", description: res.message });
+        queryClient.invalidateQueries({ queryKey: ["news"] });
+      },
+      onError: (err: any) => toast({ title: "Sync Error", description: err.message, variant: "destructive" })
+    }
+  });
+
+  const { mutate: generateIntel, isPending: isGenerating } = useGenerateGlobalIntelligence({
+    mutation: {
+      onSuccess: (res: any) => {
+        toast({ title: "Update Complete", description: res.message });
+        queryClient.invalidateQueries({ queryKey: ["intelligence"] });
+        queryClient.invalidateQueries({ queryKey: ["trending"] });
+      },
+      onError: (err: any) => toast({ title: "Update Error", description: err.message, variant: "destructive" })
+    }
+  });
+
+
+
   const featuredArticle = newsData?.articles?.[0];
+
   const gridArticles = newsData?.articles?.slice(1) || [];
 
   return (
@@ -107,8 +138,8 @@ export default function Home() {
         <div className="max-w-[1800px] mx-auto flex items-center justify-between md:justify-start md:gap-16 font-bold uppercase tracking-[0.2em] md:tracking-[0.4em]">
           <div className="flex items-center gap-4 text-foreground md:border-r md:border-white/20 md:pr-12 min-w-max">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-            <span className="hidden sm:inline">OPERATIONAL // {today}</span>
-            <span className="sm:hidden">SYSTEM_LIVE</span>
+            <span className="hidden sm:inline">LIVE // {today}</span>
+            <span className="sm:hidden">SYSTEM_ONLINE</span>
           </div>
           
           <div className="flex-1 overflow-hidden relative mx-4 md:mx-0">
@@ -119,14 +150,15 @@ export default function Home() {
             >
                {[1,2].map((_, i) => (
                  <div key={i} className="flex items-center gap-12 md:gap-24">
-                    <span className="flex items-center gap-4"><Activity className="w-3.5 h-3.5" /> FEED: SYNTHESIZING_VECTORS_8.4</span>
-                    <span className="flex items-center gap-4"><Target className="w-3.5 h-3.5" /> SIGNAL: VOLATILITY_CORRELATION_CONFIRMED</span>
-                    <span className="flex items-center gap-4"><ShieldCheck className="w-3.5 h-3.5" /> PARITY: institutional_integrity_verified_rsa4096</span>
-                    <span className="flex items-center gap-4"><ScanLine className="w-3.5 h-3.5" /> TRACE: geopolitical_node_active</span>
+                    <span className="flex items-center gap-4"><Activity className="w-3.5 h-3.5" /> FEED: SCANNING_LATEST_STORIES</span>
+                    <span className="flex items-center gap-4"><Target className="w-3.5 h-3.5" /> SIGNAL: ANALYZING_GLOBAL_NEWS</span>
+                    <span className="flex items-center gap-4"><ShieldCheck className="w-3.5 h-3.5" /> VERIFIED: AI_NEWS_ACCURACY_CHECKED</span>
+                    <span className="flex items-center gap-4"><ScanLine className="w-3.5 h-3.5" /> STATUS: NEWS_PIPELINE_ACTIVE</span>
                  </div>
                ))}
             </motion.div>
           </div>
+
  
           <div className="hidden lg:flex items-center gap-12 text-primary/20 min-w-max border-l border-white/10 pl-12 font-mono">
             <span>LATENCY: 14MS</span>
@@ -138,7 +170,50 @@ export default function Home() {
 
       <div className="max-w-[1800px] mx-auto px-6 lg:px-12 py-16 w-full relative z-10 flex flex-col gap-12">
         
+        {/* System Control Center - Manual API Triggers (Admin Only) */}
+        {isAdmin && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bento-cell neuro-beam p-8 bg-primary/[0.03] border-primary/10"
+          >
+            <div className="neuro-beam-inner flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex items-center gap-6">
+                <div className="w-12 h-12 border border-primary/20 flex items-center justify-center glass">
+                  <ShieldCheck className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Settings & Controls</h2>
+                  <p className="text-[9px] font-mono text-muted-foreground/40 uppercase tracking-[0.2em]">Manual AI Updates Enabled</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-6">
+                <MagneticButton 
+                  onClick={() => syncNews()}
+                  disabled={isSyncing}
+                  className="px-8 py-3 bg-background border border-primary/20 flex items-center gap-4 text-[9px] font-bold uppercase tracking-[0.3em] hover:bg-primary/5 disabled:opacity-50"
+                >
+                  {isSyncing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Database className="w-3.5 h-3.5" />}
+                  Refresh News
+                </MagneticButton>
+
+                <MagneticButton 
+                  onClick={() => generateIntel()}
+                  disabled={isGenerating}
+                  className="px-8 py-3 bg-primary text-primary-foreground flex items-center gap-4 text-[9px] font-bold uppercase tracking-[0.3em] shadow-prestige disabled:opacity-50"
+                >
+                  {isGenerating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
+                  Update AI Insights
+                </MagneticButton>
+
+              </div>
+            </div>
+          </motion.div>
+        )}
+        
         {/* Top Header & Search Control Bento */}
+
         <div className="bento-grid">
           <header className="col-span-12 lg:col-span-8 bento-cell neuro-beam p-6 sm:p-12">
             <div className="neuro-beam-inner">
@@ -163,10 +238,11 @@ export default function Home() {
                 <div className="relative group">
                   <input
                     type="text"
-                    placeholder="SEARCH_ARTICLES..."
+                    placeholder="SEARCH_NEWS..."
                     onChange={(e) => { setSearchQuery(e.target.value); handleSearch(e.target.value); }}
                     value={searchQuery}
                     className="w-full bg-transparent border-b border-primary/20 pb-4 pr-12 text-lg font-light tracking-tight focus:outline-none focus:border-primary transition-all placeholder:text-muted-foreground/10 placeholder:uppercase placeholder:font-mono placeholder:font-bold placeholder:text-[10px] placeholder:tracking-[0.5em]"
+
                   />
                   <Search className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/20 group-focus-within:text-primary transition-colors" />
                 </div>
@@ -220,10 +296,10 @@ export default function Home() {
               <div className="neuro-beam-inner flex flex-col h-full relative z-10">
                 <div className="flex items-center justify-between mb-12">
                   <div className="flex items-center gap-4 text-xs font-mono font-bold uppercase tracking-[0.5em] text-primary/60">
-                    <Activity className="w-4 h-4 animate-pulse-live" /> Console_Status
+                    <Activity className="w-4 h-4 animate-pulse-live" /> AI_INSIGHTS
                   </div>
                   <div className="text-[9px] font-mono font-bold text-emerald-500 uppercase tracking-[0.3em] flex items-center gap-2">
-                    <Activity className="w-3 h-3" /> Operational
+                    <Activity className="w-3 h-3" /> Online
                   </div>
                 </div>
 
@@ -231,7 +307,7 @@ export default function Home() {
                   <ConsoleSkeleton />
                 ) : intelligence ? (
                   <div className="space-y-10 flex-1 flex flex-col">
-                    <div className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/30">Primary_Vector</div>
+                    <div className="text-[10px] font-mono font-bold uppercase tracking-[0.5em] text-primary/30">Top Story</div>
                     <p className={cn(
                       "text-4xl font-bold text-foreground leading-tight tracking-tighter italic",
                       mounted && theme !== "dark" && "font-serif"
@@ -244,9 +320,10 @@ export default function Home() {
                     
                     <div className="mt-auto space-y-6">
                       <div className="flex items-end justify-between">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40">Signal_Integrity</span>
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-primary/40">AI_Confidence</span>
                         <span className="text-3xl font-mono font-bold text-foreground">{intelligence.confidence}%</span>
                       </div>
+
                       <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
                         <div
                           style={{ width: `${intelligence.confidence}%` }}
@@ -280,9 +357,10 @@ export default function Home() {
             )}
             <div className="flex justify-center pt-8">
               <MagneticButton className="px-12 py-5 border border-white/10 text-[10px] font-mono font-bold uppercase tracking-[0.5em] hover:bg-white/[0.02]">
-                Load_More_Articles
+                Load_More_News
               </MagneticButton>
             </div>
+
           </div>
 
           {/* Institutional Sidebar Bento Cells */}
@@ -308,10 +386,11 @@ export default function Home() {
                           </span>
                           <div className="flex items-center gap-3">
                             <div className="h-[2px] flex-1 bg-white/5 group-hover:bg-primary/20 transition-all" />
-                            <span className="text-[9px] font-mono text-primary/30 uppercase">{topic.count} VDR</span>
+                            <span className="text-[9px] font-mono text-primary/30 uppercase">{topic.count} Views</span>
                           </div>
                         </div>
                       </li>
+
                     ))}
                   </ul>
                 ) : null}
