@@ -29,8 +29,10 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { AntiGravityCard } from "@/components/motion/anti-gravity-card";
 import { MagneticButton } from "@/components/motion/magnetic-button";
+import { ArticleComments } from "@/components/article-comments";
+import { ArticleQnA } from "@/components/article-qna";
 
-type Tab = "summary" | "timeline" | "article" | "sources";
+type Tab = "summary" | "timeline" | "article" | "sources" | "ask";
 
 function DetailTrustMeter({ score, label }: { score: number; label: string }) {
   return (
@@ -351,6 +353,7 @@ export default function ArticlePage() {
             <div className="mb-20 border-b border-white/5 flex gap-12 overflow-x-auto hide-scrollbar">
               {[
                 { id: "summary", label: "Intelligence", icon: Fingerprint },
+                { id: "ask", label: "Ask AI", icon: Brain },
                 { id: "timeline", label: "Timeline", icon: CircleDot },
                 { id: "article", label: "Transcript", icon: FileText },
                 { id: "sources", label: "Integrity", icon: ShieldCheck },
@@ -436,6 +439,12 @@ export default function ArticlePage() {
                         </div>
                       </div>
                     )}
+                  </motion.div>
+                )}
+
+                {activeTab === "ask" && (
+                  <motion.div key="ask" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ type: "spring", stiffness: 100, damping: 20 }} className="py-4">
+                    <ArticleQnA articleId={articleId as string} />
                   </motion.div>
                 )}
 
@@ -590,6 +599,10 @@ export default function ArticlePage() {
               </AnimatePresence>
             </div>
           </div>
+          
+          {/* Comments Section */}
+          <ArticleComments articleId={articleId as string} />
+
         </div>
       </div>
     </Layout>

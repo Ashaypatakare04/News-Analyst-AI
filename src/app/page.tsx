@@ -99,10 +99,11 @@ export default function LandingPage() {
         <div className="bg-noise absolute inset-0 z-10" />
         <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
         <img 
-          src="/hero-bg.png" 
+          src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop" 
           alt="Neural Background" 
           className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-30 mix-blend-overlay"
         />
+
       </div>
 
 
@@ -208,7 +209,31 @@ export default function LandingPage() {
           </div>
         </motion.div>
 
+        {/* Dashboard Mockup Preview - ParkFlow Inspired */}
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+          className="relative max-w-6xl mx-auto mt-24 px-4 sm:px-0"
+        >
+          <div className="relative glass border-white/10 p-2 sm:p-4 rounded-xl shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
+            <img 
+              src="https://images.unsplash.com/photo-1551288049-bbbda5366a71?q=80&w=2070&auto=format&fit=crop" 
+              alt="Dashboard Preview" 
+              className="w-full rounded-lg opacity-40 group-hover:opacity-80 transition-all duration-[3000ms] group-hover:scale-105 grayscale group-hover:grayscale-0"
+            />
+            {/* Mockup UI Overlays */}
+            <div className="absolute top-12 left-12 space-y-4 z-20 hidden md:block">
+               <div className="w-32 h-2 bg-primary/20 rounded-full" />
+               <div className="w-48 h-2 bg-primary/10 rounded-full" />
+            </div>
+          </div>
+        </motion.div>
+
         {/* Scroll Indicator */}
+
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -283,10 +308,11 @@ export default function LandingPage() {
                   <AntiGravityCard intensity={4} speed="medium" className="glass p-4 aspect-video flex flex-col justify-center items-center border-white/[0.03] overflow-hidden">
                      <div className="relative w-full h-full overflow-hidden">
                         <img 
-                          src="/synthesis.png" 
+                          src="https://images.unsplash.com/photo-1550005810-728a1c3f825e?q=80&w=2070&auto=format&fit=crop" 
                           alt="Neural Synthesis" 
                           className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[3000ms] grayscale group-hover:grayscale-0"
                         />
+
                         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                         <div className="absolute bottom-8 left-8 right-8 text-center space-y-4">
                            <div className="text-[10px] font-bold uppercase tracking-[0.6em] text-primary/80 drop-shadow-2xl">Neural_Synthesis_Active</div>

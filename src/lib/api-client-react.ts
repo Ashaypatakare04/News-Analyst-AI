@@ -59,6 +59,16 @@ export function useAskQuestion(options?: { mutation?: any }) {
   }); 
 }
 
+export function useAskArticleQuestion(options?: { mutation?: any }) { 
+  return useMutation({
+    mutationFn: async ({ articleId, data }: { articleId: string | number, data: { question: string, conversationHistory?: ChatMessage[] } }) => {
+      const { askArticleWithAI } = await import("./ai");
+      return askArticleWithAI(articleId.toString(), data.question, data.conversationHistory);
+    },
+    ...options?.mutation
+  }); 
+}
+
 export function useUploadImage(options?: { mutation?: any }) {
   return { mutate: (args: { image: File }) => {}, isPending: false };
 }
@@ -196,6 +206,42 @@ export function useGenerateGlobalIntelligence(options?: { mutation?: any }) {
       const result = await generateGlobalIntelligenceAction();
       if (!result.success) throw new Error(result.error);
       return result;
+    },
+    ...options?.mutation
+  });
+}
+
+export interface Comment {
+  id: string;
+  text: string;
+  userId: string;
+  userName: string;
+  userPhotoUrl: string | null;
+  createdAt: string;
+}
+
+export function useGetComments(articleId: string | number) {
+  return useQuery<{ comments: Comment[] }>({
+    queryKey: ["comments", articleId],
+    queryFn: async () => {
+      const res = await fetch(`/api/articles/${articleId}/comments`);
+      if (!res.ok) throw new Error("Failed to fetch comments");
+      return res.json();
+    },
+    enabled: !!articleId
+  });
+}
+
+export function usePostComment(options?: { mutation?: any }) {
+  return useMutation({
+    mutationFn: async ({ articleId, data }: { articleId: string | number, data: { text: string, userId: string, userName: string, userPhotoUrl?: string | null } }) => {
+      const res = await fetch(`/api/articles/${articleId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error("Failed to post comment");
+      return res.json();
     },
     ...options?.mutation
   });

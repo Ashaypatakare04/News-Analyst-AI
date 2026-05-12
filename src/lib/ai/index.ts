@@ -311,6 +311,44 @@ export async function askWithRAG(
   return askWithVectorRAG(question, conversationHistory);
 }
 
+export async function askArticleWithAI(
+  articleId: string,
+  question: string,
+  conversationHistory: { role: string; content: string }[] = []
+) {
+  const articleRef = doc(db, "articles", articleId);
+  const snap = await getDoc(articleRef);
+
+  if (!snap.exists()) throw new Error("Article not found");
+
+  const a = snap.data();
+  
+  const historyText = conversationHistory.map(h => `${h.role === 'user' ? 'User' : 'Analyst'}: ${h.content}`).join("\n");
+
+  const prompt = `You are a senior news analyst answering questions about a specific article.
+Return JSON format ONLY:
+{
+  "answer": "Your detailed answer",
+  "confidence": 95,
+  "followUpQuestions": ["question 1", "question 2"]
+}
+
+Article Title: ${a.title}
+Article Source: ${a.source}
+Article Content: ${a.content || a.description}
+
+Conversation History:
+${historyText}
+
+User's Question: ${question}
+
+Provide an insightful, professional response based ONLY on the provided article content. DO NOT output markdown code blocks for JSON, just the raw JSON string.`;
+
+  const responseText = await callAIResiliently(prompt);
+  const cleanText = responseText.replace(/```json\n?/, "").replace(/\n?```/, "").trim();
+  return JSON.parse(cleanText);
+}
+
 export async function analyzeUploadedArticle(imageBase64: string, mimeType: string) {
   const prompt = `You are analyzing a newspaper or article image. First extract all the text you can see (OCR), then provide analysis. Return JSON:
 {
